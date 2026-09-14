@@ -1,16 +1,65 @@
-# Types and data structures for term
+# Terminal UI Toolkit - Type & Constant Definitions
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
-struct TermConfig
-    name
-    prefix
-    count
+# --- Column Alignment Constants ---
+const ALIGN_LEFT = 0
+const ALIGN_CENTER = 1
+const ALIGN_RIGHT = 2
+
+# --- Border Style Name Constants ---
+const BORDER_UNICODE = "unicode"
+const BORDER_ROUNDED = "rounded"
+const BORDER_DOUBLE = "double"
+const BORDER_ASCII = "ascii"
+const BORDER_MARKDOWN = "markdown"
+const BORDER_COMPACT = "compact"
+const BORDER_NONE = "none"
+
+# --- Struct Definitions ---
+
+struct BorderChars
+    top_left
+    top_mid
+    top_right
+    bottom_left
+    bottom_mid
+    bottom_right
+    mid_left
+    mid_mid
+    mid_right
+    horiz
+    vert
 end
 
-function make_config(name = "World", count = 1)
-    return TermConfig {
-        name: name,
-        prefix: "Hello",
-        count: count
-    }
+struct Table
+    headers
+    rows
+    alignments
+    max_widths
+    border_chars
+    show_headers
+    show_borders
+    show_separator
+    padding
+end
+
+struct CalloutBox
+    content
+    title
+    border_chars
+    color_prefix
+    padding_x
+    min_width
+end
+
+struct ProgressBar
+    current
+    total
+    width
+    filled_char
+    empty_char
+    head_char
+    color_prefix
+    show_percent
+    show_counts
 end

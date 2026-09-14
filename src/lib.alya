@@ -1,14 +1,49 @@
-# term library
+# Modern Terminal UI Toolkit for Alya
+# Provides ANSI styling, Unicode tables, callout boxes, progress bars, and prompts
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
 import "./types.alya"
-import "./core/formatter.alya"
+import "./style.alya"
+import "./border.alya"
+import "./table.alya"
+import "./box.alya"
+import "./progress.alya"
+import "./prompt.alya"
+import "./compat.alya"
 
-# Public facade functions
-function hello(name = "World")
-    return core_format_greeting(name)
+# --- High-Level Convenience Factory Functions ---
+
+# Creates a new Table builder
+function table(headers = [], rows = [], border_name = "unicode")
+    return table_create(headers, rows, border_name)
 end
 
-function new_config(name = "World", count = 1)
-    return make_config(name, count)
+# Creates a new CalloutBox
+function callout(content, title = "", border_name = "rounded")
+    return box_new(content, title, border_name)
+end
+
+# Formats a progress bar string
+function progress(current, total, width = 30)
+    return progress_bar(current, total, width)
+end
+
+# Returns an animated spinner frame
+function spinner(step, style_name = "dots")
+    return spinner_char(step, style_name)
+end
+
+# Interactive console prompt
+function prompt(message, default_val = "")
+    return prompt_text(message, default_val)
+end
+
+# Interactive yes/no confirmation
+function confirm(message, default_yes = 1)
+    return prompt_confirm(message, default_yes)
+end
+
+# Interactive list selection
+function select(message, options, default_idx = 0)
+    return prompt_select(message, options, default_idx)
 end

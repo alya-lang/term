@@ -1,0 +1,45 @@
+# Test suite for callout boxes and banners
+import "std/test"
+import "../src/lib.alya" as term
+
+function main()
+    test_suite("term Callout Box Test Suite")
+    let r = runner_new()
+
+    # 1. Plain Box without title
+    let b1 = term::box_new("Simple notice message")
+    let out1 = term::box_render(b1)
+    runner_assert(r, len(out1) > 0, "box_render returns non-empty string")
+    runner_assert(r, term::visible_len(out1) > 0, "box has visible characters")
+
+    # 2. Box with title
+    let b2 = term::box_new("Notice content", "NOTICE", "rounded")
+    let out2 = term::box_render(b2)
+    runner_assert(r, len(out2) > 0, "box with title renders successfully")
+    runner_assert(r, term::visible_len(out2) > 0, "box with title has visible characters")
+
+    # 3. Pre-styled Callouts
+    let info = term::box_info("Information message", "INFO")
+    runner_assert(r, len(info) > 0, "box_info renders")
+
+    let success = term::box_success("Operation completed", "DONE")
+    runner_assert(r, len(success) > 0, "box_success renders")
+
+    let warn = term::box_warn("High memory consumption", "WARN")
+    runner_assert(r, len(warn) > 0, "box_warn renders")
+
+    let err = term::box_error("Fatal connection timeout", "FAIL")
+    runner_assert(r, len(err) > 0, "box_error renders")
+
+    # 4. Multi-line Box
+    let b_multi = term::box_new("Line 1: Started\nLine 2: Processing\nLine 3: Finished", "PROGRESS")
+    let out_multi = term::box_render(b_multi)
+    runner_assert(r, len(out_multi) > 0, "multi-line box renders cleanly")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

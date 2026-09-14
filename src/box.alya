@@ -1,0 +1,169 @@
+# Terminal UI Toolkit - Callout Box & Message Banner Formatter
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./types.alya"
+import "./style.alya"
+import "./border.alya"
+
+function box_new(content, title = "", border_name = "rounded", color_prefix = "", padding_x = 1, min_width = 0)
+    let b_chars = border_get(border_name)
+    return CalloutBox(content, title, b_chars, color_prefix, padding_x, min_width)
+end
+
+function _box_split_lines(text)
+    let s = str(text)
+    let slen = len(s)
+    let res = []
+    if slen == 0
+        res.push("")
+        return res
+    end
+    let cur = ""
+    let i = 0
+    while i < slen
+        let c = char_at(s, i)
+        if c == "\r"
+            if i + 1 < slen and char_at(s, i + 1) == "\n"
+                i += 1
+            end
+            res.push(cur)
+            cur = ""
+        elif c == "\n"
+            res.push(cur)
+            cur = ""
+        else
+            cur += c
+        end
+        i += 1
+    end
+    res.push(cur)
+    return res
+end
+
+function _box_repeat(ch, count)
+    if count <= 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        res += ch
+        i += 1
+    end
+    return res
+end
+
+function box_render(cb)
+    let content_lines = _box_split_lines(cb.content)
+    let max_line_w = 0
+    let i = 0
+    let nlines = len(content_lines)
+    while i < nlines
+        let lw = visible_len(content_lines[i])
+        if lw > max_line_w
+            max_line_w = lw
+        end
+        i += 1
+    end
+
+    let title_str = str(cb.title)
+    let title_vlen = visible_len(title_str)
+    let min_content_for_title = 0
+    if title_vlen > 0
+        min_content_for_title = title_vlen + 2
+    end
+    if min_content_for_title > max_line_w
+        max_line_w = min_content_for_title
+    end
+    if cb.min_width > max_line_w
+        max_line_w = cb.min_width
+    end
+
+    let b = cb.border_chars
+    let col = cb.color_prefix
+    let reset = ""
+    if len(col) > 0
+        reset = "\e[0m"
+    end
+
+    let pad_w = cb.padding_x
+    if pad_w < 0
+        pad_w = 0
+    end
+    let inner_width = max_line_w + (pad_w * 2)
+
+    let out = []
+
+    # 1. Top border (with optional title embedded)
+    let top_line = ""
+    if title_vlen > 0
+        # Format: ╭─ Title ────────╮
+        let pre_dashes = 1
+        let post_dashes = inner_width - pre_dashes - title_vlen - 2
+        if post_dashes < 1
+            post_dashes = 1
+        end
+        top_line = col + b.top_left + _box_repeat(b.horiz, pre_dashes) + reset + " " + title_str + " " + col + _box_repeat(b.horiz, post_dashes) + b.top_right + reset
+    else
+        top_line = col + b.top_left + _box_repeat(b.horiz, inner_width) + b.top_right + reset
+    end
+    out.push(top_line)
+
+    # 2. Content lines
+    let pad_str = _box_repeat(" ", pad_w)
+    i = 0
+    while i < nlines
+        let line = content_lines[i]
+        let vlen = visible_len(line)
+        let trailing_spaces = max_line_w - vlen
+        if trailing_spaces < 0
+            trailing_spaces = 0
+        end
+        let row_line = col + b.vert + reset + pad_str + line + _box_repeat(" ", trailing_spaces) + pad_str + col + b.vert + reset
+        out.push(row_line)
+        i += 1
+    end
+
+    # 3. Bottom border
+    let bot_line = col + b.bottom_left + _box_repeat(b.horiz, inner_width) + b.bottom_right + reset
+    out.push(bot_line)
+
+    # Join with newlines
+    let res = ""
+    i = 0
+    let total = len(out)
+    while i < total
+        res += out[i]
+        if i < total - 1
+            res += "\n"
+        end
+        i += 1
+    end
+    return res
+end
+
+function box_print(cb)
+    say box_render(cb)
+end
+
+# --- Pre-styled Callout Boxes ---
+
+function box_info(content, title = "INFO")
+    let b = box_new(content, title, "rounded", "\e[36m") # Cyan
+    return box_render(b)
+end
+
+function box_success(content, title = "SUCCESS")
+    let b = box_new(content, title, "rounded", "\e[32m") # Green
+    return box_render(b)
+end
+
+function box_warn(content, title = "WARNING")
+    let b = box_new(content, title, "rounded", "\e[33m") # Yellow
+    return box_render(b)
+end
+
+function box_error(content, title = "ERROR")
+    let b = box_new(content, title, "rounded", "\e[31m") # Red
+    return box_render(b)
+end

@@ -1,0 +1,56 @@
+# Test suite for ANSI styling, colors, strip_ansi, and badges
+import "std/test"
+import "../src/lib.alya" as term
+
+function main()
+    test_suite("term Styling & Color Test Suite")
+    let r = runner_new()
+
+    # 1. Colors
+    let green_text = term::color_green("success")
+    runner_assert(r, len(green_text) > 7, "color_green adds escape sequence")
+    runner_assert_str_eq(r, term::strip_ansi(green_text), "success", "strip_ansi strips green escape codes")
+    runner_assert_eq(r, term::visible_len(green_text), 7, "visible_len is 7 for 'success'")
+
+    let yellow_text = term::color_yellow("warning")
+    runner_assert_str_eq(r, term::strip_ansi(yellow_text), "warning", "strip_ansi strips yellow escape codes")
+    runner_assert_eq(r, term::visible_len(yellow_text), 7, "visible_len is 7 for 'warning'")
+
+    # 2. Styles
+    let bold_text = term::style_bold("bold text")
+    runner_assert_str_eq(r, term::strip_ansi(bold_text), "bold text", "strip_ansi strips bold escape codes")
+
+    let underline_text = term::style_underline("underline")
+    runner_assert_str_eq(r, term::strip_ansi(underline_text), "underline", "strip_ansi strips underline escape codes")
+
+    # 3. 256 Colors & TrueColor (RGB)
+    let c256 = term::color_256("palette", 208)
+    runner_assert_str_eq(r, term::strip_ansi(c256), "palette", "256-color strip_ansi works")
+
+    let crgb = term::color_rgb("truecolor", 255, 128, 0)
+    runner_assert_str_eq(r, term::strip_ansi(crgb), "truecolor", "RGB color strip_ansi works")
+
+    # 4. Badges & Tags
+    let b_green = term::badge("OK", "green")
+    runner_assert_str_eq(r, term::strip_ansi(b_green), "OK", "badge strips to OK")
+    runner_assert_eq(r, term::visible_len(b_green), 2, "badge visible length is 2")
+
+    let b_red = term::badge("FAIL", "red")
+    runner_assert_str_eq(r, term::strip_ansi(b_red), "FAIL", "badge strips to FAIL")
+
+    let tg = term::tag("ROLE", "admin", "cyan")
+    runner_assert_str_eq(r, term::strip_ansi(tg), "[ROLE: admin]", "tag text format is correct")
+    runner_assert_eq(r, term::visible_len(tg), 13, "tag visible length is 13")
+
+    # 5. Empty and plain text
+    runner_assert_str_eq(r, term::strip_ansi(""), "", "strip_ansi on empty string")
+    runner_assert_str_eq(r, term::strip_ansi("plain text"), "plain text", "strip_ansi on plain string")
+    runner_assert_eq(r, term::visible_len("plain text"), 10, "visible_len on plain string")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

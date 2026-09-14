@@ -1,15 +1,63 @@
-# Example usage of term
-import "../src/lib.alya" as pkg
+# Comprehensive Demo of the term Package
+import "../src/lib.alya" as term
 
 function main()
-    # Basic greeting
-    let msg = pkg::hello("Alya Developer")
-    say msg
+    say term::color_cyan("╔══════════════════════════════════════════════════════════════╗")
+    say term::color_cyan("║") + "         " + term::style_bold(term::color_bright_yellow("Alya Terminal UI Toolkit (term)")) + "               " + term::color_cyan("║")
+    say term::color_cyan("╚══════════════════════════════════════════════════════════════╝")
+    say ""
 
-    # Using configuration struct
-    let cfg = pkg::new_config("Modular Architecture", 5)
-    say "Target: " + cfg.name
-    say "Formatted: " + pkg::core_format_custom(cfg)
+    # 1. Colors, Styles, and Badges
+    say term::style_bold("1. ANSI Styling & Badges:")
+    say "  Colors: " + term::color_red("Red") + " " + term::color_green("Green") + " " + term::color_yellow("Yellow") + " " + term::color_blue("Blue") + " " + term::color_magenta("Magenta") + " " + term::color_cyan("Cyan")
+    say "  Styles: " + term::style_bold("Bold") + ", " + term::style_dim("Dim") + ", " + term::style_italic("Italic") + ", " + term::style_underline("Underline")
+    say "  Badges: " + term::badge("ACTIVE", "green") + " " + term::badge("PENDING", "yellow") + " " + term::badge("FAILED", "red") + " " + term::badge("INFO", "cyan")
+    say "  Tags:   " + term::tag("ENV", "production", "green") + " " + term::tag("PORT", "8080", "cyan")
+    say ""
+
+    # 2. Callout Boxes
+    say term::style_bold("2. Callout Banners:")
+    say term::box_info("Alya Compiler v0.0.16 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
+    say ""
+    say term::box_success("All 23 package tests passed with 100% code coverage.", "BUILD PASSED")
+    say ""
+
+    # 3. Dynamic Table (Unicode Rounded)
+    say term::style_bold("3. Dynamic Table (Unicode Rounded with Badges):")
+    let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], "rounded")
+    term::table_set_alignments(t, [term::ALIGN_LEFT, term::ALIGN_LEFT, term::ALIGN_RIGHT, term::ALIGN_CENTER, term::ALIGN_RIGHT])
+    term::table_add_row(t, ["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
+    term::table_add_row(t, ["2", "Auth Service", "8081", term::badge("RUNNING", "green"), "8 ms"])
+    term::table_add_row(t, ["3", "Database Pool", "5432", term::badge("DEGRADED", "yellow"), "142 ms"])
+    term::table_add_row(t, ["4", "Redis Cache", "6379", term::badge("STOPPED", "red"), "0 ms"])
+    term::table_print(t)
+    say ""
+
+    # 4. Alternative Table Borders
+    say term::style_bold("4. Markdown Table:")
+    let md = term::table(["Package", "Version", "Status"], [
+        ["http", "v0.3.1", "Stable"],
+        ["vpn", "v0.2.8", "Active"],
+        ["term", "v0.1.0", "New"]
+    ], "markdown")
+    term::table_print(md)
+    say ""
+
+    # 5. Progress Bars & Spinners
+    say term::style_bold("5. Progress Indicators:")
+    say "  Downloading assets: " + term::progress(75, 100, 25)
+    say "  Compiling binaries: " + term::progress(100, 100, 25)
+    say "  Spinner frames:     " + term::spinner(0) + " " + term::spinner(1) + " " + term::spinner(2) + " " + term::spinner(3) + " " + term::spinner(4)
+    say ""
+
+    # 6. Backward-Compatibility with term_table
+    say term::style_bold("6. Backward Compatibility with 'term_table':")
+    say term::box_top(6, 16, 8, 10, 8)
+    say term::row(term::cell("101", 6), term::cell("User Service", 16), term::cell("8080", 8), term::cell(term::badge("ONLINE", "green"), 10), term::cell("Healthy", 8))
+    say term::box_bot(6, 16, 8, 10, 8)
+    say ""
+
+    say term::color_green("✓ Demo executed successfully!")
 end
 
 main()

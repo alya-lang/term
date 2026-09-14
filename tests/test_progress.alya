@@ -1,0 +1,48 @@
+# Test suite for progress bars and spinners
+import "std/test"
+import "../src/lib.alya" as term
+
+function main()
+    test_suite("term Progress & Spinner Test Suite")
+    let r = runner_new()
+
+    # 1. Progress Bar at 0%
+    let p0 = term::progress(0, 100, 20)
+    runner_assert(r, len(p0) > 0, "progress 0% returns formatted string")
+    runner_assert(r, term::visible_len(p0) > 0, "progress 0% has visible length")
+
+    # 2. Progress Bar at 50%
+    let p50 = term::progress(50, 100, 20)
+    runner_assert(r, len(p50) > 0, "progress 50% returns formatted string")
+
+    # 3. Progress Bar at 100%
+    let p100 = term::progress(100, 100, 20)
+    runner_assert(r, len(p100) > 0, "progress 100% returns formatted string")
+
+    # 4. Out of bounds clamping
+    let p_under = term::progress(-10, 100, 20)
+    runner_assert(r, len(p_under) > 0, "negative progress handled gracefully")
+
+    let p_over = term::progress(150, 100, 20)
+    runner_assert(r, len(p_over) > 0, "overflow progress handled gracefully")
+
+    # 5. Spinners
+    let s_dot = term::spinner(0, "dots")
+    runner_assert(r, len(s_dot) > 0, "dots spinner frame returns string")
+
+    let s_line = term::spinner(1, "line")
+    runner_assert_str_eq(r, s_line, "/", "line spinner step 1 is /")
+
+    let s_pulse = term::spinner(0, "pulse")
+    runner_assert(r, len(s_pulse) > 0, "pulse spinner returns frame")
+
+    let s_arrows = term::spinner(2, "arrows")
+    runner_assert(r, len(s_arrows) > 0, "arrows spinner returns frame")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

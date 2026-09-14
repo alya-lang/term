@@ -1,0 +1,119 @@
+# Terminal UI Toolkit - Progress Bar & Spinner Indicators
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./types.alya"
+import "./style.alya"
+
+function progress_bar_new(total, width = 30, filled_char = "=", empty_char = " ", head_char = ">", color_prefix = "")
+    if total <= 0
+        total = 1
+    end
+    if width <= 0
+        width = 20
+    end
+    return ProgressBar(0, total, width, filled_char, empty_char, head_char, color_prefix, 1, 1)
+end
+
+function _prog_repeat(ch, count)
+    if count <= 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        res += ch
+        i += 1
+    end
+    return res
+end
+
+# Formats a progress bar string: "[===========>          ] 55% (55/100)"
+function progress_bar_render(pb, current)
+    pb.current = current
+    let tot = pb.total
+    if tot <= 0
+        tot = 1
+    end
+    let cur = current
+    if cur < 0
+        cur = 0
+    end
+    if cur > tot
+        cur = tot
+    end
+
+    let w = pb.width
+    if w <= 0
+        w = 20
+    end
+
+    let percent = (cur * 100) / tot
+    let filled_count = (cur * w) / tot
+    if filled_count > w
+        filled_count = w
+    end
+
+    let head_count = 0
+    if len(pb.head_char) > 0 and filled_count < w and cur > 0
+        head_count = 1
+    end
+
+    let actual_filled = filled_count
+    if head_count > 0 and actual_filled > 0
+        actual_filled -= 1
+    end
+
+    let empty_count = w - actual_filled - head_count
+    if empty_count < 0
+        empty_count = 0
+    end
+
+    let col = pb.color_prefix
+    let reset = ""
+    if len(col) > 0
+        reset = "\e[0m"
+    end
+
+    let bar = "[" + col + _prog_repeat(pb.filled_char, actual_filled)
+    if head_count > 0
+        bar += pb.head_char
+    end
+    bar += reset + _prog_repeat(pb.empty_char, empty_count) + "]"
+
+    if pb.show_percent
+        bar += " " + str(percent) + "%"
+    end
+
+    if pb.show_counts
+        bar += " (" + str(cur) + "/" + str(tot) + ")"
+    end
+
+    return bar
+end
+
+# Quick helper without struct instantiation
+function progress_bar(current, total, width = 30)
+    let pb = progress_bar_new(total, width)
+    return progress_bar_render(pb, current)
+end
+
+# Returns an animated spinner glyph for a given step and style
+function spinner_char(step, style_name = "dots")
+    when style_name
+        is "line" then
+            let frames = ["|", "/", "-", "\\"]
+            return frames[step % 4]
+        is "pulse" then
+            let frames = ["█", "▓", "▒", "░", "▒", "▓"]
+            return frames[step % 6]
+        is "arrows" then
+            let frames = ["←", "↖", "↑", "↗", "→", "↘", "↓", "↙"]
+            return frames[step % 8]
+        is "blocks" then
+            let frames = ["▖", "▘", "▝", "▗"]
+            return frames[step % 4]
+        else # "dots"
+            let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+            return frames[step % 10]
+    end
+end

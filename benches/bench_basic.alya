@@ -1,26 +1,52 @@
-# Benchmark suite for term
+# Benchmark suite for term package
 import "std/bench"
-import "../src/lib.alya" as pkg
+import "../src/lib.alya" as term
 
 function main()
     let runner = bench_runner("term Micro-Benchmarks")
 
+    # 1. Benchmark: strip_ansi & visible_len
     bench_start(runner, 100000)
+    let text = term::color_green("Benchmark Test String")
     let i = 0
     while i < 100000
-        pkg::hello("Alya")
+        let len_v = term::visible_len(text)
         i += 1
     end
-    bench_stop(runner, "hello() 100k calls")
+    bench_stop(runner, "visible_len() with ANSI [100k calls]")
 
-    bench_start(runner, 50000)
+    # 2. Benchmark: Table creation & rendering
+    bench_start(runner, 5000)
     let j = 0
-    while j < 50000
-        let cfg = pkg::new_config("Bench", 1)
-        pkg::core_format_custom(cfg)
+    while j < 5000
+        let t = term::table(["ID", "Name", "Score"], [
+            ["1", "Alice", "95"],
+            ["2", "Bob", "88"],
+            ["3", "Charlie", "72"]
+        ], "rounded")
+        let out = term::table_render(t)
         j += 1
     end
-    bench_stop(runner, "new_config() + format_custom() 50k calls")
+    bench_stop(runner, "table_render() 3x3 table [5k calls]")
+
+    # 3. Benchmark: Callout box rendering
+    bench_start(runner, 10000)
+    let k = 0
+    while k < 10000
+        let b = term::box_new("High-performance terminal rendering engine", "INFO")
+        let box_out = term::box_render(b)
+        k += 1
+    end
+    bench_stop(runner, "box_render() callout banner [10k calls]")
+
+    # 4. Benchmark: Progress bar rendering
+    bench_start(runner, 50000)
+    let m = 0
+    while m < 50000
+        let pb = term::progress(m % 100, 100, 20)
+        m += 1
+    end
+    bench_stop(runner, "progress() bar calculation [50k calls]")
 
     bench_summary(runner)
 end

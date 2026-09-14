@@ -1,0 +1,74 @@
+# Terminal UI Toolkit - Interactive Console Prompts
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./style.alya"
+
+# Prompts for text input with optional default value
+function prompt_text(message, default_val = "")
+    let prompt_str = color_cyan("?") + " " + style_bold(message)
+    if len(str(default_val)) > 0
+        prompt_str += color_gray(" [" + str(default_val) + "]")
+    end
+    prompt_str += ": "
+    let answer = trim(ask(prompt_str))
+    if len(answer) == 0 and len(str(default_val)) > 0
+        return str(default_val)
+    end
+    return answer
+end
+
+# Asks a confirmation question. Returns 1 for yes, 0 for no.
+function prompt_confirm(message, default_yes = 1)
+    let suffix = " (Y/n): "
+    if default_yes == 0
+        suffix = " (y/N): "
+    end
+    let prompt_str = color_yellow("?") + " " + style_bold(message) + color_gray(suffix)
+    let resp = lower(trim(ask(prompt_str)))
+    if len(resp) == 0
+        return default_yes
+    end
+    if resp == "y" or resp == "yes" or resp == "1" or resp == "e" or resp == "evet" or resp == "true"
+        return 1
+    end
+    return 0
+end
+
+# Prompts the user to select one option from a list
+function prompt_select(message, options, default_idx = 0)
+    let opt_count = len(options)
+    if opt_count == 0
+        return ""
+    end
+    say color_cyan("?") + " " + style_bold(message)
+    let i = 0
+    while i < opt_count
+        let prefix = "  " + str(i + 1) + ") "
+        if i == default_idx
+            say color_green(prefix + str(options[i]) + " (default)")
+        else
+            say color_gray(prefix) + str(options[i])
+        end
+        i += 1
+    end
+
+    let prompt_str = color_gray("Select option [1-" + str(opt_count) + "]: ")
+    let raw = trim(ask(prompt_str))
+    if len(raw) == 0
+        if default_idx >= 0 and default_idx < opt_count
+            return str(options[default_idx])
+        end
+        return str(options[0])
+    end
+
+    let choice = int(raw)
+    if choice >= 1 and choice <= opt_count
+        return str(options[choice - 1])
+    end
+
+    # Fallback to default
+    if default_idx >= 0 and default_idx < opt_count
+        return str(options[default_idx])
+    end
+    return str(options[0])
+end

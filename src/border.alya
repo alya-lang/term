@@ -1,0 +1,45 @@
+# Terminal UI Toolkit - Border Style Presets
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./types.alya"
+
+function border_unicode()
+    return BorderChars("┌", "┬", "┐", "└", "┴", "┘", "├", "┼", "┤", "─", "│")
+end
+
+function border_rounded()
+    return BorderChars("╭", "┬", "╮", "╰", "┴", "╯", "├", "┼", "┤", "─", "│")
+end
+
+function border_double()
+    return BorderChars("╔", "╦", "╗", "╚", "╩", "╝", "╠", "╬", "╣", "═", "║")
+end
+
+function border_ascii()
+    return BorderChars("+", "+", "+", "+", "+", "+", "+", "+", "+", "-", "|")
+end
+
+function border_markdown()
+    return BorderChars("|", "|", "|", "|", "|", "|", "|", "|", "|", "-", "|")
+end
+
+function border_compact()
+    return BorderChars("", "", "", "", "", "", "", "", "", "─", " ")
+end
+
+function border_none()
+    return BorderChars("", "", "", "", "", "", "", "", "", " ", " ")
+end
+
+function border_get(name)
+    when name
+        is "unicode" then return border_unicode()
+        is "rounded" then return border_rounded()
+        is "double" then return border_double()
+        is "ascii" then return border_ascii()
+        is "markdown" then return border_markdown()
+        is "compact" then return border_compact()
+        is "none" then return border_none()
+        else return border_unicode()
+    end
+end

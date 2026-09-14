@@ -1,0 +1,66 @@
+# Test suite for dynamic tables, borders, alignments, and sizing
+import "std/test"
+import "../src/lib.alya" as term
+
+function main()
+    test_suite("term Table Formatting Test Suite")
+    let r = runner_new()
+
+    # 1. Empty Table
+    let empty_t = term::table()
+    runner_assert_str_eq(r, term::table_render(empty_t), "", "empty table renders empty string")
+
+    # 2. Simple Table (Unicode)
+    let t = term::table(["ID", "Name"], [["1", "Alice"], ["2", "Bob"]])
+    let out = term::table_render(t)
+    runner_assert(r, len(out) > 0, "simple table renders non-empty string")
+    runner_assert(r, term::visible_len(out) > 0, "table has visible content")
+
+    # 3. Alignments
+    let t_align = term::table(["Left", "Center", "Right"], [["L", "C", "R"]])
+    term::table_set_alignments(t_align, [term::ALIGN_LEFT, term::ALIGN_CENTER, term::ALIGN_RIGHT])
+    let out_align = term::table_render(t_align)
+    runner_assert(r, len(out_align) > 0, "aligned table renders successfully")
+
+    # 4. Border Styles
+    let borders = ["unicode", "rounded", "double", "ascii", "markdown", "compact", "none"]
+    let i = 0
+    let blen = len(borders)
+    while i < blen
+        let bname = borders[i]
+        let tb = term::table(["Col 1", "Col 2"], [["Val A", "Val B"]], bname)
+        let b_out = term::table_render(tb)
+        runner_assert(r, len(b_out) > 0, "border " + bname + " renders cleanly")
+        i += 1
+    end
+
+    # 5. Table with ANSI Badges in cells (alignment check)
+    let t_badge = term::table(["Service", "Status"], [
+        ["Auth", term::badge("RUNNING", "green")],
+        ["Database", term::badge("DEGRADED", "yellow")]
+    ])
+    let out_badge = term::table_render(t_badge)
+    runner_assert(r, len(out_badge) > 0, "table with ANSI badges renders properly")
+
+    # 6. Table Max Width Truncation
+    let t_trunc = term::table(["Title", "Description"], [
+        ["Task 1", "A very long detailed description that exceeds column limit"]
+    ])
+    term::table_set_max_widths(t_trunc, [0, 20])
+    let out_trunc = term::table_render(t_trunc)
+    runner_assert(r, len(out_trunc) > 0, "max width truncated table renders")
+
+    # 7. Multi-line cells
+    let t_multi = term::table(["Key", "Details"], [
+        ["Item 1", "First line\nSecond line\nThird line"]
+    ])
+    let out_multi = term::table_render(t_multi)
+    runner_assert(r, len(out_multi) > 0, "multi-line cell table renders cleanly")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

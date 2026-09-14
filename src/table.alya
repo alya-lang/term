@@ -1,0 +1,394 @@
+# Terminal UI Toolkit - Dynamic Table Formatter & Builder
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./types.alya"
+import "./style.alya"
+import "./border.alya"
+
+# --- Table Factory ---
+
+function table_new(border_style_name = "unicode")
+    let b = border_get(border_style_name)
+    return Table([], [], [], [], b, 1, 1, 1, 1)
+end
+
+function table_create(headers = [], rows = [], border_style_name = "unicode")
+    let t = table_new(border_style_name)
+    t.headers = headers
+    t.rows = rows
+    return t
+end
+
+# --- Table Configuration Setters ---
+
+function table_set_headers(tbl, headers)
+    tbl.headers = headers
+    return tbl
+end
+
+function table_add_row(tbl, row)
+    tbl.rows.push(row)
+    return tbl
+end
+
+function table_add_rows(tbl, rows)
+    let i = 0
+    let rlen = len(rows)
+    while i < rlen
+        tbl.rows.push(rows[i])
+        i += 1
+    end
+    return tbl
+end
+
+function table_set_border(tbl, border_name)
+    tbl.border_chars = border_get(border_name)
+    return tbl
+end
+
+function table_set_border_chars(tbl, border_chars)
+    tbl.border_chars = border_chars
+    return tbl
+end
+
+function table_set_alignments(tbl, aligns)
+    tbl.alignments = aligns
+    return tbl
+end
+
+function table_set_max_widths(tbl, max_widths)
+    tbl.max_widths = max_widths
+    return tbl
+end
+
+function table_set_padding(tbl, pad)
+    tbl.padding = pad
+    return tbl
+end
+
+function table_set_show_headers(tbl, show)
+    tbl.show_headers = show
+    return tbl
+end
+
+function table_set_show_borders(tbl, show)
+    tbl.show_borders = show
+    return tbl
+end
+
+# --- Internal Helper Functions ---
+
+function _str_repeat(ch, count)
+    if count <= 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        res += ch
+        i += 1
+    end
+    return res
+end
+
+function _split_lines(text)
+    let s = str(text)
+    let slen = len(s)
+    let res = []
+    if slen == 0
+        res.push("")
+        return res
+    end
+    let cur = ""
+    let i = 0
+    while i < slen
+        let c = char_at(s, i)
+        if c == "\r"
+            if i + 1 < slen and char_at(s, i + 1) == "\n"
+                i += 1
+            end
+            res.push(cur)
+            cur = ""
+        elif c == "\n"
+            res.push(cur)
+            cur = ""
+        else
+            cur += c
+        end
+        i += 1
+    end
+    res.push(cur)
+    return res
+end
+
+function _truncate_cell(s, max_len)
+    if max_len <= 0
+        return ""
+    end
+    let clean = strip_ansi(s)
+    if len(clean) <= max_len
+        return s
+    end
+    if len(s) == len(clean)
+        return substring(s, 0, max_len)
+    end
+    return substring(clean, 0, max_len)
+end
+
+function _format_cell(text, target_width, align, pad_spaces)
+    let s = str(text)
+    let vlen = visible_len(s)
+    if vlen > target_width
+        if target_width > 3
+            s = _truncate_cell(s, target_width - 3) + "..."
+            vlen = visible_len(s)
+        else
+            s = _truncate_cell(s, target_width)
+            vlen = visible_len(s)
+        end
+    end
+    let diff = target_width - vlen
+    if diff < 0
+        diff = 0
+    end
+    let pad_left_count = 0
+    let pad_right_count = 0
+    when align
+        is 1 then # ALIGN_CENTER
+            pad_left_count = diff / 2
+            pad_right_count = diff - pad_left_count
+        is 2 then # ALIGN_RIGHT
+            pad_left_count = diff
+            pad_right_count = 0
+        else # ALIGN_LEFT
+            pad_left_count = 0
+            pad_right_count = diff
+    end
+    return pad_spaces + _str_repeat(" ", pad_left_count) + s + _str_repeat(" ", pad_right_count) + pad_spaces
+end
+
+function _make_border_line(widths, left_ch, mid_ch, right_ch, horiz_ch, pad_size)
+    if len(left_ch) == 0 and len(mid_ch) == 0 and len(right_ch) == 0 and len(horiz_ch) == 0
+        return ""
+    end
+    let res = left_ch
+    let c = 0
+    let col_count = len(widths)
+    while c < col_count
+        let cell_total_w = widths[c] + (pad_size * 2)
+        res += _str_repeat(horiz_ch, cell_total_w)
+        if c < col_count - 1
+            res += mid_ch
+        end
+        c += 1
+    end
+    res += right_ch
+    return res
+end
+
+# --- Table Rendering Engine ---
+
+function table_render(tbl)
+    let col_count = len(tbl.headers)
+    let rlen = len(tbl.rows)
+    let r = 0
+    while r < rlen
+        let row = tbl.rows[r]
+        if len(row) > col_count
+            col_count = len(row)
+        end
+        r += 1
+    end
+
+    if col_count == 0
+        return ""
+    end
+
+    # 1. Calculate natural column widths
+    let widths = []
+    let c = 0
+    while c < col_count
+        widths.push(0)
+        c += 1
+    end
+
+    if tbl.show_headers and len(tbl.headers) > 0
+        c = 0
+        let hlen = len(tbl.headers)
+        while c < col_count
+            if c < hlen
+                let hw = visible_len(tbl.headers[c])
+                if hw > widths[c]
+                    widths[c] = hw
+                end
+            end
+            c += 1
+        end
+    end
+
+    r = 0
+    while r < rlen
+        let row = tbl.rows[r]
+        let row_cols = len(row)
+        c = 0
+        while c < col_count
+            if c < row_cols
+                let cell_lines = _split_lines(row[c])
+                let line_idx = 0
+                let num_lines = len(cell_lines)
+                while line_idx < num_lines
+                    let lw = visible_len(cell_lines[line_idx])
+                    if lw > widths[c]
+                        widths[c] = lw
+                    end
+                    line_idx += 1
+                end
+            end
+            c += 1
+        end
+        r += 1
+    end
+
+    # 2. Clamp column widths if max_widths specified
+    let mw_len = len(tbl.max_widths)
+    if mw_len > 0
+        c = 0
+        while c < col_count
+            if c < mw_len and tbl.max_widths[c] > 0
+                if widths[c] > tbl.max_widths[c]
+                    widths[c] = tbl.max_widths[c]
+                end
+            end
+            c += 1
+        end
+    end
+
+    # Ensure minimum width of 1 per column
+    c = 0
+    while c < col_count
+        if widths[c] < 1
+            widths[c] = 1
+        end
+        c += 1
+    end
+
+    let b = tbl.border_chars
+    let pad_str = _str_repeat(" ", tbl.padding)
+    let vert_ch = b.vert
+    let out_lines = []
+
+    # 3. Render Top Border
+    if tbl.show_borders
+        let top = _make_border_line(widths, b.top_left, b.top_mid, b.top_right, b.horiz, tbl.padding)
+        if len(top) > 0
+            out_lines.push(top)
+        end
+    end
+
+    # 4. Render Headers
+    if tbl.show_headers and len(tbl.headers) > 0
+        let h_line = vert_ch
+        c = 0
+        let hlen = len(tbl.headers)
+        while c < col_count
+            let h_val = ""
+            if c < hlen
+                h_val = str(tbl.headers[c])
+            end
+            let h_align = 0
+            if c < len(tbl.alignments)
+                h_align = tbl.alignments[c]
+            end
+            h_line += _format_cell(h_val, widths[c], h_align, pad_str)
+            if len(vert_ch) > 0
+                h_line += vert_ch
+            end
+            c += 1
+        end
+        out_lines.push(h_line)
+
+        # Separator line between headers and data rows
+        if tbl.show_separator
+            let sep = _make_border_line(widths, b.mid_left, b.mid_mid, b.mid_right, b.horiz, tbl.padding)
+            if len(sep) > 0
+                out_lines.push(sep)
+            end
+        end
+    end
+
+    # 5. Render Data Rows (Multi-line cell supported)
+    r = 0
+    while r < rlen
+        let row = tbl.rows[r]
+        let row_cols = len(row)
+
+        # Split all cells into lines
+        let cell_sublines = []
+        let max_sublines = 1
+        c = 0
+        while c < col_count
+            let raw_cell = ""
+            if c < row_cols
+                raw_cell = row[c]
+            end
+            let sub = _split_lines(raw_cell)
+            if len(sub) > max_sublines
+                max_sublines = len(sub)
+            end
+            cell_sublines.push(sub)
+            c += 1
+        end
+
+        # Render each subline of this row
+        let s_idx = 0
+        while s_idx < max_sublines
+            let r_line = vert_ch
+            c = 0
+            while c < col_count
+                let sub_arr = cell_sublines[c]
+                let cell_txt = ""
+                if s_idx < len(sub_arr)
+                    cell_txt = sub_arr[s_idx]
+                end
+                let c_align = 0
+                if c < len(tbl.alignments)
+                    c_align = tbl.alignments[c]
+                end
+                r_line += _format_cell(cell_txt, widths[c], c_align, pad_str)
+                if len(vert_ch) > 0
+                    r_line += vert_ch
+                end
+                c += 1
+            end
+            out_lines.push(r_line)
+            s_idx += 1
+        end
+
+        r += 1
+    end
+
+    # 6. Render Bottom Border
+    if tbl.show_borders
+        let bot = _make_border_line(widths, b.bottom_left, b.bottom_mid, b.bottom_right, b.horiz, tbl.padding)
+        if len(bot) > 0
+            out_lines.push(bot)
+        end
+    end
+
+    # Join lines with newline
+    let result = ""
+    let line_i = 0
+    let total_lines = len(out_lines)
+    while line_i < total_lines
+        result += out_lines[line_i]
+        if line_i < total_lines - 1
+            result += "\n"
+        end
+        line_i += 1
+    end
+    return result
+end
+
+function table_print(tbl)
+    say table_render(tbl)
+end

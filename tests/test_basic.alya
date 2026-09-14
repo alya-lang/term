@@ -1,28 +1,34 @@
-# Test suite for term
+# Test suite for term package overview and facade
 import "std/test"
-import "../src/lib.alya" as pkg
+import "../src/lib.alya" as term
 
 function main()
-    test_suite("term Test Suite")
+    test_suite("term Facade & Overview Test Suite")
     let r = runner_new()
 
-    # 1. Basic facade function
-    let res = pkg::hello("Alya")
-    runner_assert_str_eq(r, res, "Hello, Alya!", "pkg::hello returns formatted greeting")
+    # 1. Colors and Styles
+    let red_txt = term::color_red("error")
+    runner_assert(r, len(red_txt) > 5, "color_red produces ANSI escape sequence")
+    runner_assert_str_eq(r, term::strip_ansi(red_txt), "error", "strip_ansi recovers original text")
+    runner_assert_eq(r, term::visible_len(red_txt), 5, "visible_len ignores ANSI escapes")
 
-    # 2. Default parameter
-    let default_res = pkg::hello()
-    runner_assert_str_eq(r, default_res, "Hello, World!", "pkg::hello() uses default name")
+    # 2. Table Facade
+    let t = term::table(["A", "B"], [["1", "2"]])
+    let rendered = term::table_render(t)
+    runner_assert(r, len(rendered) > 0, "table_render returns non-empty string")
+    runner_assert(r, term::visible_len(rendered) > 0, "rendered table has visible text")
 
-    # 3. Modular types & config constructor
-    let cfg = pkg::new_config("Community", 3)
-    runner_assert_str_eq(r, cfg.name, "Community", "pkg::new_config sets name correctly")
-    runner_assert_str_eq(r, cfg.prefix, "Hello", "pkg::new_config sets default prefix")
-    runner_assert_eq(r, cfg.count, 3, "pkg::new_config sets count correctly")
+    # 3. Callout Box
+    let b = term::box_info("All systems operational", "STATUS")
+    runner_assert(r, len(b) > 0, "box_info renders callout box")
 
-    # 4. Core custom formatter using struct
-    let custom_res = pkg::core_format_custom(cfg)
-    runner_assert_str_eq(r, custom_res, "Hello, Community!", "pkg::core_format_custom formats using config")
+    # 4. Progress Bar
+    let pb = term::progress(50, 100, 20)
+    runner_assert(r, len(pb) > 0, "progress returns formatted bar")
+
+    # 5. Backward Compatibility
+    let c = term::cell("Hello", 10)
+    runner_assert_eq(r, len(c), 10, "cell pads to exact width")
 
     let failed = runner_summary(r)
     if failed > 0
