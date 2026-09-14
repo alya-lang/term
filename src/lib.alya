@@ -1,5 +1,5 @@
 # Modern Terminal UI Toolkit for Alya
-# Provides ANSI styling, Unicode tables, callout boxes, progress bars, and prompts
+# Provides ANSI styling, Unicode tables, callout boxes, progress bars, prompts, trees, charts, and cursor controls
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
 import "./types.alya"
@@ -10,6 +10,12 @@ import "./box.alya"
 import "./progress.alya"
 import "./prompt.alya"
 import "./compat.alya"
+import "./cursor.alya"
+import "./status.alya"
+import "./rule.alya"
+import "./tree.alya"
+import "./chart.alya"
+import "./live.alya"
 
 # --- High-Level Convenience Factory Functions ---
 
@@ -47,3 +53,55 @@ end
 function select(message, options, default_idx = 0)
     return prompt_select(message, options, default_idx)
 end
+
+# Interactive password / secret prompt
+function password(message, mask = "*")
+    return prompt_password(message, mask)
+end
+
+# Interactive multi-selection prompt
+function multi_select(message, options, default_indices = [])
+    return prompt_multi_select(message, options, default_indices)
+end
+
+# Interactive non-empty prompt
+function prompt_required(message, error_msg = "Value cannot be empty.")
+    return prompt_non_empty(message, error_msg)
+end
+
+# Interactive integer prompt
+function prompt_number(message, min_val = 0, max_val = 2147483647, default_val = 0)
+    return prompt_int(message, min_val, max_val, default_val)
+end
+
+# Formats a horizontal rule / divider
+function hr(title = "", width = 60, style_name = "single")
+    return rule(title, width, style_name)
+end
+
+# Tree node factory
+function node(label, children = [])
+    return tree_node(label, children)
+end
+
+# Tree leaf factory
+function leaf(label)
+    return tree_leaf(label)
+end
+
+# Sparkline chart
+function spark(values, min_val = null, max_val = null)
+    return sparkline(values, min_val, max_val)
+end
+
+# Bar chart
+function bar(label, value, max_val, width = 20)
+    return bar_chart(label, value, max_val, width)
+end
+
+# Status logging shortcuts
+function success(msg) log_success(msg) end
+function warn(msg)    log_warn(msg) end
+function error(msg)   log_error(msg) end
+function info(msg)    log_info(msg) end
+function step(c, t, m) log_step(c, t, m) end

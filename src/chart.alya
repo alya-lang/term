@@ -1,0 +1,110 @@
+# Terminal UI Toolkit - Mini Data Visualizations (Sparklines & Bar Charts)
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./style.alya"
+
+function _chart_repeat(ch, count)
+    if count <= 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        res += ch
+        i += 1
+    end
+    return res
+end
+
+# Generates a sparkline string from an array of numbers
+# Uses Unicode block elements:  ▂▃▄▅▆▇█
+function sparkline(values, min_val = null, max_val = null)
+    let v_count = len(values)
+    if v_count == 0
+        return ""
+    end
+
+    let bars = [" ", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+
+    let actual_min = 0
+    let actual_max = 0
+
+    if min_val != null and max_val != null
+        actual_min = int(min_val)
+        actual_max = int(max_val)
+    else
+        actual_min = int(values[0])
+        actual_max = int(values[0])
+        let i = 1
+        while i < v_count
+            let v = int(values[i])
+            if v < actual_min
+                actual_min = v
+            end
+            if v > actual_max
+                actual_max = v
+            end
+            i += 1
+        end
+    end
+
+    let range_val = actual_max - actual_min
+    if range_val <= 0
+        # All values equal, render mid-level bar
+        return _chart_repeat("▄", v_count)
+    end
+
+    let res = ""
+    let j = 0
+    while j < v_count
+        let v = int(values[j])
+        if v < actual_min
+            v = actual_min
+        end
+        if v > actual_max
+            v = actual_max
+        end
+
+        let idx = ((v - actual_min) * 7) / range_val
+        if idx < 0
+            idx = 0
+        end
+        if idx > 7
+            idx = 7
+        end
+
+        res += bars[idx]
+        j += 1
+    end
+    return res
+end
+
+# Generates a horizontal percentage bar chart
+# Example: "CPU  [████████████░░░░░░░░] 60% (60/100)"
+function bar_chart(label, value, max_val, width = 20, fill_char = "█", empty_char = "░")
+    if max_val <= 0
+        max_val = 1
+    end
+    if value < 0
+        value = 0
+    end
+    if value > max_val
+        value = max_val
+    end
+    if width <= 0
+        width = 20
+    end
+
+    let pct = (value * 100) / max_val
+    let filled_w = (value * width) / max_val
+    let empty_w = width - filled_w
+
+    let bar_visual = color_bright_cyan(_chart_repeat(fill_char, filled_w)) + color_gray(_chart_repeat(empty_char, empty_w))
+    let label_str = str(label)
+    let lead = ""
+    if len(label_str) > 0
+        lead = style_bold(label_str) + " "
+    end
+
+    return lead + "[" + bar_visual + "] " + style_bold(str(pct) + "%") + color_gray(" (" + str(value) + "/" + str(max_val) + ")")
+end

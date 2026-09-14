@@ -1,0 +1,66 @@
+# Terminal UI Toolkit - Tree Hierarchy Formatting
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./types.alya"
+import "./style.alya"
+
+function tree_node(label, children = [])
+    return TreeNode(str(label), children)
+end
+
+function tree_leaf(label)
+    let empty_children = []
+    return TreeNode(str(label), empty_children)
+end
+
+function _tree_walk(node, prefix, is_last, is_root, out_lines)
+    let label = str(node.label)
+    let children = node.children
+
+    let next_prefix = prefix
+    if is_root == 1
+        out_lines.push(label)
+    else
+        let connector = "├── "
+        if is_last == 1
+            connector = "└── "
+            next_prefix = prefix + "    "
+        else
+            next_prefix = prefix + "│   "
+        end
+        out_lines.push(prefix + connector + label)
+    end
+
+    let c_len = len(children)
+    let i = 0
+    while i < c_len
+        let child = children[i]
+        let child_is_last = 0
+        if i == c_len - 1
+            child_is_last = 1
+        end
+        _tree_walk(child, next_prefix, child_is_last, 0, out_lines)
+        i += 1
+    end
+end
+
+function tree_render(root)
+    let lines = []
+    _tree_walk(root, "", 1, 1, lines)
+    let res = ""
+    let i = 0
+    let count = len(lines)
+    while i < count
+        if i == 0
+            res = lines[i]
+        else
+            res += "\n" + lines[i]
+        end
+        i += 1
+    end
+    return res
+end
+
+function tree(root)
+    return tree_render(root)
+end

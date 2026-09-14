@@ -1,0 +1,50 @@
+# Test suite for status badges and loggers module
+import "std/test"
+import "../src/status.alya" as status
+import "../src/style.alya" as style
+
+function main()
+    test_suite("Status Badges & Loggers Test Suite")
+    let r = runner_new()
+
+    # 1. Icons
+    runner_assert_str_eq(r, status::icon_success(), "✔", "icon_success returns checkmark")
+    runner_assert_str_eq(r, status::icon_warn(), "⚠", "icon_warn returns warning sign")
+    runner_assert_str_eq(r, status::icon_error(), "✖", "icon_error returns cross mark")
+    runner_assert_str_eq(r, status::icon_info(), "ℹ", "icon_info returns info symbol")
+    runner_assert_str_eq(r, status::icon_step(), "➔", "icon_step returns arrow symbol")
+    runner_assert_str_eq(r, status::icon_dot(), "•", "icon_dot returns bullet dot")
+
+    # 2. Format Success
+    let succ = status::format_success("Compilation finished")
+    runner_assert(r, len(succ) > 0, "format_success produces non-empty string")
+    let plain_succ = style::strip_ansi(succ)
+    runner_assert(r, style::visible_len(succ) > 0, "format_success visible length > 0")
+
+    # 3. Format Warning
+    let warn_str = status::format_warn("Deprecated config key")
+    let plain_warn = style::strip_ansi(warn_str)
+    runner_assert(r, len(plain_warn) > 0, "format_warn produces valid string")
+
+    # 4. Format Error
+    let err_str = status::format_error("Connection refused")
+    let plain_err = style::strip_ansi(err_str)
+    runner_assert(r, len(plain_err) > 0, "format_error produces valid string")
+
+    # 5. Format Info
+    let info_str = status::format_info("Listening on 0.0.0.0:8080")
+    let plain_info = style::strip_ansi(info_str)
+    runner_assert(r, len(plain_info) > 0, "format_info produces valid string")
+
+    # 6. Format Step
+    let step_str = status::format_step(2, 5, "Resolving dependencies")
+    let plain_step = style::strip_ansi(step_str)
+    runner_assert(r, len(plain_step) > 0, "format_step produces valid string")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

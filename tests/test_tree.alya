@@ -1,0 +1,46 @@
+# Test suite for tree view module
+import "std/test"
+import "../src/tree.alya" as tree
+
+function main()
+    test_suite("Tree Hierarchy Test Suite")
+    let r = runner_new()
+
+    # 1. Single Leaf
+    let single = tree::tree_leaf("root_only")
+    let rendered_single = tree::tree_render(single)
+    runner_assert_str_eq(r, rendered_single, "root_only", "single leaf renders its label")
+
+    # 2. Flat Tree
+    let flat_root = tree::tree_node("project", [
+        tree::tree_leaf("file1.txt"),
+        tree::tree_leaf("file2.txt")
+    ])
+    let flat_rendered = tree::tree_render(flat_root)
+    runner_assert(r, len(flat_rendered) > 0, "flat tree renders non-empty string")
+
+    # 3. Deep Nested Tree
+    let deep_root = tree::tree_node("my_app", [
+        tree::tree_node("src", [
+            tree::tree_leaf("main.alya"),
+            tree::tree_leaf("lib.alya")
+        ]),
+        tree::tree_node("tests", [
+            tree::tree_leaf("test_main.alya")
+        ]),
+        tree::tree_leaf("alya.toml")
+    ])
+    let deep_rendered = tree::tree_render(deep_root)
+    runner_assert(r, len(deep_rendered) > 0, "deep tree renders non-empty string")
+
+    # 4. Facade function
+    let f_rendered = tree::tree(deep_root)
+    runner_assert_str_eq(r, f_rendered, deep_rendered, "tree facade matches tree_render")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

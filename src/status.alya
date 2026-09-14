@@ -1,0 +1,62 @@
+# Terminal UI Toolkit - Status Badges, Loggers & Icons
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./style.alya"
+
+# --- Unicode Icons ---
+function icon_success() return "✔" end
+function icon_warn()    return "⚠" end
+function icon_error()   return "✖" end
+function icon_info()    return "ℹ" end
+function icon_step()    return "➔" end
+function icon_dot()     return "•" end
+
+# --- Status String Formatters ---
+
+# Returns formatted success message: "✔ [SUCCESS] <msg>"
+function format_success(msg)
+    return color_bright_green(icon_success()) + " " + style_bold(color_bright_green("[SUCCESS]")) + " " + str(msg)
+end
+
+# Returns formatted warning message: "⚠ [WARNING] <msg>"
+function format_warn(msg)
+    return color_bright_yellow(icon_warn()) + " " + style_bold(color_bright_yellow("[WARNING]")) + " " + str(msg)
+end
+
+# Returns formatted error message: "✖ [ERROR]   <msg>"
+function format_error(msg)
+    return color_bright_red(icon_error()) + " " + style_bold(color_bright_red("[ERROR]  ")) + " " + str(msg)
+end
+
+# Returns formatted info message: "ℹ [INFO]    <msg>"
+function format_info(msg)
+    return color_bright_cyan(icon_info()) + " " + style_bold(color_bright_cyan("[INFO]   ")) + " " + str(msg)
+end
+
+# Returns formatted step progress message: "➔ [1/3] <msg>"
+function format_step(current, total, msg)
+    let step_str = "[" + str(current) + "/" + str(total) + "]"
+    return color_bright_magenta(icon_step()) + " " + style_bold(step_str) + " " + str(msg)
+end
+
+# --- Direct Terminal Loggers ---
+
+function log_success(msg)
+    say format_success(msg)
+end
+
+function log_warn(msg)
+    say format_warn(msg)
+end
+
+function log_error(msg)
+    say format_error(msg)
+end
+
+function log_info(msg)
+    say format_info(msg)
+end
+
+function log_step(current, total, msg)
+    say format_step(current, total, msg)
+end

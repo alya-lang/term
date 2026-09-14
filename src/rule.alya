@@ -1,0 +1,97 @@
+# Terminal UI Toolkit - Horizontal Rules & Key-Value Lists
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+import "./style.alya"
+
+function _repeat(ch, count)
+    if count <= 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        res += ch
+        i += 1
+    end
+    return res
+end
+
+# Formats a horizontal divider line with optional title
+# Styles: "single", "double", "dashed", "dotted", "thick", "wave"
+function rule(title = "", width = 60, style_name = "single")
+    if width <= 0
+        width = 60
+    end
+
+    let ch = "─"
+    when style_name
+        is "double" then ch = "═"
+        is "dashed" then ch = "-"
+        is "dotted" then ch = "·"
+        is "thick"  then ch = "━"
+        is "wave"   then ch = "~"
+        else ch = "─"
+    end
+
+    let title_str = str(title)
+    let t_vis = visible_len(title_str)
+
+    if t_vis == 0
+        return _repeat(ch, width)
+    end
+
+    # Layout: ─── Title ────────────────────────────────
+    let prefix_len = 3
+    if width < prefix_len + t_vis + 4
+        # Narrow width fallback
+        return _repeat(ch, 2) + " " + title_str + " " + _repeat(ch, 2)
+    end
+
+    let prefix = _repeat(ch, prefix_len) + " "
+    let suffix_len = width - (prefix_len + 1 + t_vis + 1)
+    let suffix = " " + _repeat(ch, suffix_len)
+
+    return prefix + style_bold(title_str) + suffix
+end
+
+# Formats a key-value pair aligned with leader characters (e.g. dots or spaces)
+# Example: "Compiler .......................... alyac 0.0.16"
+function kv(key, value, width = 40, leader = ".")
+    if width <= 0
+        width = 40
+    end
+    let k_str = str(key)
+    let v_str = str(value)
+    let k_vis = visible_len(k_str)
+    let v_vis = visible_len(v_str)
+
+    if k_vis + v_vis + 2 >= width
+        return k_str + " " + v_str
+    end
+
+    let fill_count = width - (k_vis + v_vis + 2)
+    let fill = _repeat(leader, fill_count)
+
+    return k_str + " " + color_gray(fill) + " " + v_str
+end
+
+# Formats an array of [key, value] pairs into an aligned key-value block
+function kv_list(pairs, width = 40, leader = ".")
+    let count = len(pairs)
+    if count == 0
+        return ""
+    end
+    let res = ""
+    let i = 0
+    while i < count
+        let pair = pairs[i]
+        let line = kv(pair[0], pair[1], width, leader)
+        if i == 0
+            res = line
+        else
+            res += "\n" + line
+        end
+        i += 1
+    end
+    return res
+end

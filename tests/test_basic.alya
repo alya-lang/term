@@ -30,6 +30,25 @@ function main()
     let c = term::cell("Hello", 10)
     runner_assert_eq(r, len(c), 10, "cell pads to exact width")
 
+    # 6. Horizontal Rules & KV
+    let hr_str = term::hr("Overview", 40, "single")
+    runner_assert_eq(r, term::visible_len(hr_str), 40, "hr renders exact width")
+
+    # 7. Mini Visualizations
+    let sp = term::spark([1, 4, 8, 3, 7])
+    runner_assert(r, len(sp) > 0, "spark returns sparkline")
+
+    let b_chart = term::bar("RAM", 64, 128, 16)
+    runner_assert(r, len(b_chart) > 0, "bar returns formatted bar chart")
+
+    # 8. Tree Hierarchy
+    let tr = term::node("app", [term::leaf("main.alya")])
+    let tr_rendered = term::tree(tr)
+    runner_assert(r, len(tr_rendered) > 0, "tree facade renders hierarchy")
+
+    # 9. Cursor Controls
+    runner_assert_str_eq(r, term::cursor_hide(), "\e[?25l", "cursor_hide generates escape code")
+
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

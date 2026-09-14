@@ -1,0 +1,49 @@
+# Test suite for horizontal rules and key-value module
+import "std/test"
+import "../src/rule.alya" as rule
+import "../src/style.alya" as style
+
+function main()
+    test_suite("Horizontal Rules & Key-Value Test Suite")
+    let r = runner_new()
+
+    # 1. Plain Rules
+    let r_plain = rule::rule("", 20, "single")
+    runner_assert_eq(r, style::visible_len(r_plain), 20, "plain rule has expected width")
+
+    let r_double = rule::rule("", 15, "double")
+    runner_assert_eq(r, style::visible_len(r_double), 15, "double rule has expected width")
+
+    let r_dashed = rule::rule("", 25, "dashed")
+    runner_assert_str_eq(r, r_dashed, "-------------------------", "dashed rule matches dashes")
+
+    # 2. Rules with Titles
+    let r_title = rule::rule("Settings", 40, "single")
+    runner_assert_eq(r, style::visible_len(r_title), 40, "titled rule has expected visible width")
+
+    let r_double_title = rule::rule("STATUS", 30, "double")
+    runner_assert_eq(r, style::visible_len(r_double_title), 30, "double titled rule has expected width")
+
+    # 3. Key-Value Formatting
+    let line1 = rule::kv("Compiler", "alyac", 30, ".")
+    runner_assert_eq(r, style::visible_len(line1), 30, "kv line has exact specified width")
+
+    let line2 = rule::kv("Status", style::color_green("ONLINE"), 25, "_")
+    runner_assert_eq(r, style::visible_len(line2), 25, "kv line with ANSI value maintains visual width")
+
+    # 4. Key-Value List
+    let pairs = [
+        ["OS", "Windows"],
+        ["Arch", "x64"],
+        ["Version", "0.0.16"]
+    ]
+    let block = rule::kv_list(pairs, 35, ".")
+    runner_assert(r, len(block) > 0, "kv_list returns non-empty formatted block")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

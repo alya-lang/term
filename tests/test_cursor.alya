@@ -1,0 +1,37 @@
+# Test suite for cursor & screen control module
+import "std/test"
+import "../src/cursor.alya" as cursor
+
+function main()
+    test_suite("Cursor & Screen Control Test Suite")
+    let r = runner_new()
+
+    # 1. Cursor Movement
+    runner_assert_str_eq(r, cursor::cursor_to(5, 10), "\e[5;10H", "cursor_to generates correct ANSI")
+    runner_assert_str_eq(r, cursor::cursor_up(3), "\e[3A", "cursor_up generates correct ANSI")
+    runner_assert_str_eq(r, cursor::cursor_down(2), "\e[2B", "cursor_down generates correct ANSI")
+    runner_assert_str_eq(r, cursor::cursor_right(4), "\e[4C", "cursor_right generates correct ANSI")
+    runner_assert_str_eq(r, cursor::cursor_left(1), "\e[1D", "cursor_left generates correct ANSI")
+    runner_assert_str_eq(r, cursor::cursor_up(0), "", "cursor_up(0) returns empty string")
+
+    # 2. Position Save & Restore
+    runner_assert_str_eq(r, cursor::cursor_save(), "\e[s", "cursor_save returns \\e[s")
+    runner_assert_str_eq(r, cursor::cursor_restore(), "\e[u", "cursor_restore returns \\e[u")
+
+    # 3. Visibility
+    runner_assert_str_eq(r, cursor::cursor_hide(), "\e[?25l", "cursor_hide returns \\e[?25l")
+    runner_assert_str_eq(r, cursor::cursor_show(), "\e[?25h", "cursor_show returns \\e[?25h")
+
+    # 4. Screen & Line Clearing
+    runner_assert_str_eq(r, cursor::clear_screen(), "\e[2J\e[H", "clear_screen generates full clear")
+    runner_assert_str_eq(r, cursor::clear_line(), "\e[2K\r", "clear_line generates line clear and carriage return")
+    runner_assert_str_eq(r, cursor::clear_to_end(), "\e[K", "clear_to_end returns \\e[K")
+    runner_assert_str_eq(r, cursor::clear_to_start(), "\e[1K", "clear_to_start returns \\e[1K")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()

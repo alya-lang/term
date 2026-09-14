@@ -63,3 +63,8 @@ struct ProgressBar
     show_percent
     show_counts
 end
+
+struct TreeNode
+    label
+    children
+end

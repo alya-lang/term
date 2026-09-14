@@ -1,0 +1,41 @@
+# Test suite for mini charts and sparklines module
+import "std/test"
+import "../src/chart.alya" as chart
+import "../src/style.alya" as style
+
+function main()
+    test_suite("Mini Charts & Sparklines Test Suite")
+    let r = runner_new()
+
+    # 1. Sparkline with Progression
+    let sp1 = chart::sparkline([0, 10, 20, 30, 40, 50, 60, 70])
+    runner_assert(r, len(sp1) > 0, "sparkline produces non-empty string")
+
+    # 2. Empty Sparkline
+    let sp_empty = chart::sparkline([])
+    runner_assert_str_eq(r, sp_empty, "", "empty array produces empty sparkline")
+
+    # 3. Uniform Sparkline
+    let sp_uniform = chart::sparkline([42, 42, 42])
+    runner_assert(r, len(sp_uniform) > 0, "uniform values produce non-empty sparkline")
+
+    # 4. Bar Chart
+    let bar1 = chart::bar_chart("CPU", 75, 100, 20)
+    runner_assert(r, len(bar1) > 0, "bar_chart produces non-empty string")
+    let plain_bar = style::strip_ansi(bar1)
+    runner_assert(r, len(plain_bar) > 0, "plain bar chart has visible length")
+
+    # 5. Clamped Bar Chart (Edge cases)
+    let bar_zero = chart::bar_chart("Zero", 0, 100, 10)
+    runner_assert(r, len(bar_zero) > 0, "zero value bar chart produces output")
+
+    let bar_overflow = chart::bar_chart("Over", 150, 100, 10)
+    runner_assert(r, len(bar_overflow) > 0, "overflowing value clamps properly")
+
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+main()
