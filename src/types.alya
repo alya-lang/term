@@ -1,0 +1,16 @@
+# Types and data structures for term
+# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
+struct TermConfig
+    name
+    prefix
+    count
+end
+
+function make_config(name = "World", count = 1)
+    return TermConfig {
+        name: name,
+        prefix: "Hello",
+        count: count
+    }
+end
