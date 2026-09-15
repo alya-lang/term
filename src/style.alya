@@ -60,7 +60,8 @@ function strip_ansi(text)
     return c::ansi_strip(text)
 end
 
-# Returns the number of UTF-8 code points / terminal character cells
+# Returns the visual terminal cell width of a UTF-8 string
+# Accounts for ASCII (width 1), CJK/wide characters (width 2), and 4-byte emojis (width 2)
 function utf8_len(s)
     let s_str = str(s)
     let slen = len(s_str)
@@ -71,9 +72,45 @@ function utf8_len(s)
     let i = 0
     while i < slen
         let o = ord(char_at(s_str, i))
-        # Count non-continuation bytes (o < 128 for ASCII, o >= 192 for multi-byte leading bytes)
-        if o < 128 or o >= 192
+        if o < 128
+            # Printable ASCII
+            if o >= 32 and o < 127
+                count += 1
+            end
+        elif o >= 192 and o < 224
+            # 2-byte UTF-8 (Latin extended, Greek, Cyrillic, etc.) -> 1 cell
             count += 1
+            if i + 1 < slen
+                i += 1
+            end
+        elif o >= 224 and o < 240
+            # 3-byte UTF-8: decode code point
+            if i + 2 < slen
+                let b1 = ord(char_at(s_str, i + 1)) - 128
+                let b2 = ord(char_at(s_str, i + 2)) - 128
+                let cp = (o - 224) * 4096 + b1 * 64 + b2
+                # Wide CJK, Hangul, Fullwidth forms -> 2 cells
+                if (cp >= 4352 and cp <= 4447) or (cp >= 11904 and cp <= 42191) or (cp >= 44032 and cp <= 55203) or (cp >= 63744 and cp <= 64255) or (cp >= 65040 and cp <= 65049) or (cp >= 65072 and cp <= 65135) or (cp >= 65281 and cp <= 65376) or (cp >= 65504 and cp <= 65510)
+                    count += 2
+                # Common 3-byte Emojis -> 2 cells
+                elif (cp >= 9200 and cp <= 9203) or cp == 9208 or cp == 9209 or (cp >= 9888 and cp <= 9889) or (cp >= 9917 and cp <= 9918) or cp == 9970 or cp == 9971 or cp == 9973 or cp == 9978 or cp == 9989 or cp == 9992 or cp == 9993 or (cp >= 9994 and cp <= 9996) or cp == 10024 or cp == 10060 or cp == 10062 or (cp >= 10067 and cp <= 10071) or cp == 10084 or (cp >= 10133 and cp <= 10135) or cp == 11088 or cp == 11093
+                    count += 2
+                else
+                    count += 1
+                end
+                i += 2
+            else
+                count += 1
+                i = slen
+            end
+        elif o >= 240
+            # 4-byte UTF-8: emojis (🧬, 🐍, 🎮, etc.) & CJK extensions -> 2 cells
+            count += 2
+            if i + 3 < slen
+                i += 3
+            else
+                i = slen
+            end
         end
         i += 1
     end

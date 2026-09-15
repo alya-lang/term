@@ -47,6 +47,12 @@ function main()
     runner_assert_str_eq(r, term::strip_ansi("plain text"), "plain text", "strip_ansi on plain string")
     runner_assert_eq(r, term::visible_len("plain text"), 10, "visible_len on plain string")
 
+    # 6. UTF-8 & Emoji Terminal Visual Width
+    runner_assert_eq(r, term::visible_len("🧬"), 2, "emoji DNA is 2 columns wide")
+    runner_assert_eq(r, term::visible_len("🐍"), 2, "emoji Snake is 2 columns wide")
+    runner_assert_eq(r, term::visible_len("🧬 CONWAY'S GAME OF LIFE (ALYA) 🧬"), 34, "Conway banner title is 34 columns wide")
+    runner_assert_eq(r, term::visible_len("Türkçe öğüt"), 11, "Turkish UTF-8 characters are 1 column each")
+
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

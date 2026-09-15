@@ -36,6 +36,17 @@ function main()
     let out_multi = term::box_render(b_multi)
     runner_assert(r, len(out_multi) > 0, "multi-line box renders cleanly")
 
+    # 5. Box with Emoji Title - border lines must align exactly
+    let b_emoji = term::box_new("Pattern: random  |  Rule: B3/S23 (Standard Conway)", "🧬 CONWAY'S GAME OF LIFE (ALYA) 🧬", "rounded")
+    let out_emoji = term::box_render(b_emoji)
+    let lines = term::_box_split_lines(out_emoji)
+    runner_assert(r, len(lines) == 3, "box has 3 lines")
+    let top_w = term::visible_len(lines[0])
+    let mid_w = term::visible_len(lines[1])
+    let bot_w = term::visible_len(lines[2])
+    runner_assert_eq(r, top_w, mid_w, "top border width matches content width with emojis")
+    runner_assert_eq(r, mid_w, bot_w, "content width matches bottom border width with emojis")
+
     let failed = runner_summary(r)
     if failed > 0
         exit(1)
