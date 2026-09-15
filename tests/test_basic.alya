@@ -26,11 +26,7 @@ function main()
     let pb = term::progress(50, 100, 20)
     runner_assert(r, len(pb) > 0, "progress returns formatted bar")
 
-    # 5. Backward Compatibility
-    let c = term::cell("Hello", 10)
-    runner_assert_eq(r, len(c), 10, "cell pads to exact width")
-
-    # 6. Horizontal Rules & KV
+    # 5. Horizontal Rules & KV
     let hr_str = term::hr("Overview", 40, "single")
     runner_assert_eq(r, term::visible_len(hr_str), 40, "hr renders exact width")
 

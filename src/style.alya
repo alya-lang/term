@@ -1,103 +1,63 @@
 # Terminal UI Toolkit - ANSI Styling, Colors, and Text Utilities
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
-function _ansi_esc(code, s)
-    return "\e[" + code + "m" + str(s) + "\e[0m"
-end
+import "std/color" as c
 
-# --- Basic Foreground Colors ---
-function color_black(s) return _ansi_esc("30", s) end
-function color_red(s) return _ansi_esc("31", s) end
-function color_green(s) return _ansi_esc("32", s) end
-function color_yellow(s) return _ansi_esc("33", s) end
-function color_blue(s) return _ansi_esc("34", s) end
-function color_magenta(s) return _ansi_esc("35", s) end
-function color_cyan(s) return _ansi_esc("36", s) end
-function color_white(s) return _ansi_esc("37", s) end
-function color_gray(s) return _ansi_esc("90", s) end
+# --- Basic Foreground Colors (Delegated to std/color) ---
+function color_black(s) return c::color_black(s) end
+function color_red(s) return c::color_red(s) end
+function color_green(s) return c::color_green(s) end
+function color_yellow(s) return c::color_yellow(s) end
+function color_blue(s) return c::color_blue(s) end
+function color_magenta(s) return c::color_magenta(s) end
+function color_cyan(s) return c::color_cyan(s) end
+function color_white(s) return c::color_white(s) end
+function color_gray(s) return c::color_gray(s) end
 
 # --- Bright Foreground Colors ---
-function color_bright_red(s) return _ansi_esc("91", s) end
-function color_bright_green(s) return _ansi_esc("92", s) end
-function color_bright_yellow(s) return _ansi_esc("93", s) end
-function color_bright_blue(s) return _ansi_esc("94", s) end
-function color_bright_magenta(s) return _ansi_esc("95", s) end
-function color_bright_cyan(s) return _ansi_esc("96", s) end
-function color_bright_white(s) return _ansi_esc("97", s) end
+function color_bright_red(s) return c::color_bright_red(s) end
+function color_bright_green(s) return c::color_bright_green(s) end
+function color_bright_yellow(s) return c::color_bright_yellow(s) end
+function color_bright_blue(s) return c::color_bright_blue(s) end
+function color_bright_magenta(s) return c::color_bright_magenta(s) end
+function color_bright_cyan(s) return c::color_bright_cyan(s) end
+function color_bright_white(s) return c::color_bright_white(s) end
 
 # --- Background Colors ---
-function bg_black(s) return _ansi_esc("40", s) end
-function bg_red(s) return _ansi_esc("41", s) end
-function bg_green(s) return _ansi_esc("42", s) end
-function bg_yellow(s) return _ansi_esc("43", s) end
-function bg_blue(s) return _ansi_esc("44", s) end
-function bg_magenta(s) return _ansi_esc("45", s) end
-function bg_cyan(s) return _ansi_esc("46", s) end
-function bg_white(s) return _ansi_esc("47", s) end
+function bg_black(s) return c::bg_black(s) end
+function bg_red(s) return c::bg_red(s) end
+function bg_green(s) return c::bg_green(s) end
+function bg_yellow(s) return c::bg_yellow(s) end
+function bg_blue(s) return c::bg_blue(s) end
+function bg_magenta(s) return c::bg_magenta(s) end
+function bg_cyan(s) return c::bg_cyan(s) end
+function bg_white(s) return c::bg_white(s) end
 
 # --- Text Modifiers ---
-function style_bold(s) return _ansi_esc("1", s) end
-function style_dim(s) return _ansi_esc("2", s) end
-function style_italic(s) return _ansi_esc("3", s) end
-function style_underline(s) return _ansi_esc("4", s) end
-function style_inverse(s) return _ansi_esc("7", s) end
-function style_strikethrough(s) return _ansi_esc("9", s) end
+function style_bold(s) return c::style_bold(s) end
+function style_dim(s) return c::style_dim(s) end
+function style_italic(s) return c::style_italic(s) end
+function style_underline(s) return c::style_underline(s) end
+function style_inverse(s) return c::style_inverse(s) end
+function style_strikethrough(s) return c::style_strikethrough(s) end
 
 # Aliases
-function bold(s) return style_bold(s) end
-function dim(s) return style_dim(s) end
-function italic(s) return style_italic(s) end
-function underline(s) return style_underline(s) end
+function bold(s) return c::style_bold(s) end
+function dim(s) return c::style_dim(s) end
+function italic(s) return c::style_italic(s) end
+function underline(s) return c::style_underline(s) end
 
-# --- 24-bit TrueColor (RGB) ---
-function color_rgb(s, r, g, b)
-    return "\e[38;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m" + str(s) + "\e[0m"
-end
-
-function bg_rgb(s, r, g, b)
-    return "\e[48;2;" + str(r) + ";" + str(g) + ";" + str(b) + "m" + str(s) + "\e[0m"
-end
-
-# --- 256-Color Palette ---
-function color_256(s, code)
-    return "\e[38;5;" + str(code) + "m" + str(s) + "\e[0m"
-end
-
-function bg_256(s, code)
-    return "\e[48;5;" + str(code) + "m" + str(s) + "\e[0m"
-end
-
-# --- Raw ANSI Codes ---
-function ansi_reset() return "\e[0m" end
+# --- 24-bit TrueColor (RGB) & 256 Colors ---
+function color_rgb(s, r, g, b) return c::color_rgb(s, r, g, b) end
+function bg_rgb(s, r, g, b) return c::bg_rgb(s, r, g, b) end
+function color_256(s, code) return c::color_256(s, code) end
+function bg_256(s, code) return c::bg_256(s, code) end
+function ansi_reset() return c::ansi_reset() end
 
 # --- Strip ANSI Sequences & Calculate True Visual Length ---
 # Strips all ANSI CSI escape sequences (\e[...m, \e[...H, etc.)
 function strip_ansi(text)
-    let s = str(text)
-    let slen = len(s)
-    if slen == 0
-        return ""
-    end
-    let res = ""
-    let i = 0
-    while i < slen
-        let ch = char_at(s, i)
-        if ord(ch) == 27 and i + 1 < slen and char_at(s, i + 1) == "["
-            i += 2
-            while i < slen
-                let c = char_at(s, i)
-                let o = ord(c)
-                if o >= 64 and o <= 126
-                    break
-                end
-                i += 1
-            end
-        else
-            res += ch
-        end
-        i += 1
-    end
-    return res
+    return c::ansi_strip(text)
 end
 
 # Returns the number of UTF-8 code points / terminal character cells

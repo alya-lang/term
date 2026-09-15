@@ -23,8 +23,7 @@ Modern, zero-dependency terminal UI toolkit for the Alya language ecosystem: ANS
 - ⏳ **Progress & Spinners**: Customizable progress bars and animated spinner frames (`dots`, `line`, `pulse`, `arrows`, `blocks`)
 - 🖥️ **Cursor & Screen Controls**: Full ANSI cursor positioning, visibility toggle, and screen/line clearing
 - ❓ **Interactive Prompts**: Clean CLI inputs: `prompt()`, `confirm()`, `select()`, `password()`, `multi_select()`, and validated numbers
-- 🔄 **100% Backward Compatible**: Direct drop-in replacement for the legacy `term_table` package (`cell()`, `box_top()`, `box_mid()`, `box_bot()`, `row()`, `badge()`)
-- 🧪 **Comprehensive Test Suite**: 11 automated test suites with 100% pass rate
+- 🧪 **Comprehensive Test Suite**: 10 automated test suites with 100% pass rate
 
 ---
 
@@ -47,15 +46,13 @@ term/
 │   ├── cursor.alya         # Terminal cursor movement and screen clearing
 │   ├── live.alya           # In-place terminal line updating helpers
 │   ├── progress.alya       # Progress bar and spinner indicators
-│   ├── prompt.alya         # Interactive terminal prompts (ask, confirm, select, password)
-│   └── compat.alya         # Drop-in compatibility layer with legacy term_table
+│   └── prompt.alya         # Interactive terminal prompts (ask, confirm, select, password)
 ├── examples/
 │   └── demo.alya           # Runnable showcase demo
 ├── tests/                  # Automated test suites
 │   ├── test_basic.alya
 │   ├── test_box.alya
 │   ├── test_chart.alya
-│   ├── test_compat.alya
 │   ├── test_cursor.alya
 │   ├── test_progress.alya
 │   ├── test_rule.alya
