@@ -100,8 +100,28 @@ function strip_ansi(text)
     return res
 end
 
+# Returns the number of UTF-8 code points / terminal character cells
+function utf8_len(s)
+    let s_str = str(s)
+    let slen = len(s_str)
+    if slen == 0
+        return 0
+    end
+    let count = 0
+    let i = 0
+    while i < slen
+        let o = ord(char_at(s_str, i))
+        # Count non-continuation bytes (o < 128 for ASCII, o >= 192 for multi-byte leading bytes)
+        if o < 128 or o >= 192
+            count += 1
+        end
+        i += 1
+    end
+    return count
+end
+
 function visible_len(text)
-    return len(strip_ansi(text))
+    return utf8_len(strip_ansi(text))
 end
 
 # --- Badges and Tags ---

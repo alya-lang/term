@@ -15,15 +15,57 @@ function main()
     say "  Tags:   " + term::tag("ENV", "production", "green") + " " + term::tag("PORT", "8080", "cyan")
     say ""
 
-    # 2. Callout Boxes
-    say term::style_bold("2. Callout Banners:")
-    say term::box_info("Alya Compiler v0.0.16 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
-    say ""
-    say term::box_success("All 23 package tests passed with 100% code coverage.", "BUILD PASSED")
+    # 2. Status Loggers & Icons
+    say term::style_bold("2. Status Loggers & Badges:")
+    term::info("Starting build pipeline for 'alya-app'...")
+    term::step(1, 3, "Compiling source files into native binary")
+    term::warn("Unused local variable 'temp_buffer' at line 42")
+    term::success("Compilation succeeded in 1.42s")
     say ""
 
-    # 3. Dynamic Table (Unicode Rounded)
-    say term::style_bold("3. Dynamic Table (Unicode Rounded with Badges):")
+    # 3. Horizontal Rules & Key-Value Lists
+    say term::style_bold("3. Horizontal Rules & Key-Value Lists:")
+    say term::hr("System Information", 50, "double")
+    say term::kv("Operating System", "Windows 11 (x86_64)", 50, ".")
+    say term::kv("Alya Compiler", "alyac 0.0.16", 50, ".")
+    say term::kv("Status", term::badge("HEALTHY", "green"), 50, ".")
+    say term::hr("", 50, "double")
+    say ""
+
+    # 4. Tree Hierarchy
+    say term::style_bold("4. Tree Hierarchy Visualization:")
+    let project_tree = term::node("my_project", [
+        term::node("src", [
+            term::leaf("main.alya"),
+            term::leaf("service.alya"),
+            term::leaf("utils.alya")
+        ]),
+        term::node("config", [
+            term::leaf("default.toml"),
+            term::leaf("production.toml")
+        ]),
+        term::leaf("alya.toml"),
+        term::leaf("README.md")
+    ])
+    say term::tree(project_tree)
+    say ""
+
+    # 5. Mini Visualizations (Sparklines & Bar Charts)
+    say term::style_bold("5. Mini Visualizations:")
+    say "  CPU Load Trend (last 10m):  " + term::color_bright_cyan(term::spark([5, 12, 25, 45, 80, 95, 65, 40, 20, 10]))
+    say "  Memory Usage: " + term::bar("RAM", 72, 100, 20)
+    say "  Disk Space:   " + term::bar("SSD", 35, 100, 20)
+    say ""
+
+    # 6. Callout Boxes
+    say term::style_bold("6. Callout Banners:")
+    say term::box_info("Alya Compiler v0.0.16 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
+    say ""
+    say term::box_success("All 11 package test suites passed with 100% coverage.", "BUILD PASSED")
+    say ""
+
+    # 7. Dynamic Table (Unicode Rounded)
+    say term::style_bold("7. Dynamic Table (Unicode Rounded with Badges):")
     let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], "rounded")
     term::table_set_alignments(t, [term::ALIGN_LEFT, term::ALIGN_LEFT, term::ALIGN_RIGHT, term::ALIGN_CENTER, term::ALIGN_RIGHT])
     term::table_add_row(t, ["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
@@ -33,28 +75,11 @@ function main()
     term::table_print(t)
     say ""
 
-    # 4. Alternative Table Borders
-    say term::style_bold("4. Markdown Table:")
-    let md = term::table(["Package", "Version", "Status"], [
-        ["http", "v0.3.1", "Stable"],
-        ["vpn", "v0.2.8", "Active"],
-        ["term", "v0.1.0", "New"]
-    ], "markdown")
-    term::table_print(md)
-    say ""
-
-    # 5. Progress Bars & Spinners
-    say term::style_bold("5. Progress Indicators:")
+    # 8. Progress Bars & Spinners
+    say term::style_bold("8. Progress Indicators:")
     say "  Downloading assets: " + term::progress(75, 100, 25)
     say "  Compiling binaries: " + term::progress(100, 100, 25)
     say "  Spinner frames:     " + term::spinner(0) + " " + term::spinner(1) + " " + term::spinner(2) + " " + term::spinner(3) + " " + term::spinner(4)
-    say ""
-
-    # 6. Backward-Compatibility with term_table
-    say term::style_bold("6. Backward Compatibility with 'term_table':")
-    say term::box_top(6, 16, 8, 10, 8)
-    say term::row(term::cell("101", 6), term::cell("User Service", 16), term::cell("8080", 8), term::cell(term::badge("ONLINE", "green"), 10), term::cell("Healthy", 8))
-    say term::box_bot(6, 16, 8, 10, 8)
     say ""
 
     say term::color_green("✓ Demo executed successfully!")

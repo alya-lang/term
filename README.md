@@ -5,7 +5,7 @@
 [![Alya](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Falya-lang%2Fterm%2Fmain%2Falya.toml&query=%24.package.alya-version&label=Alya&color=orange&prefix=%3E%3D)](https://github.com/alya-lang/alya)
 [![Package Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Falya-lang%2Fterm%2Fmain%2Falya.toml&query=%24.package.version&label=Version&color=brightgreen)](alya.toml)
 
-Modern, zero-dependency terminal UI toolkit for the Alya language ecosystem: ANSI styling, Unicode tables, callout boxes, progress bars, and interactive prompts.
+Modern, zero-dependency terminal UI toolkit for the Alya language ecosystem: ANSI styling, Unicode tables, callout boxes, tree hierarchies, progress bars, mini charts, status loggers, interactive prompts, and cursor controls.
 
 ---
 
@@ -14,12 +14,17 @@ Modern, zero-dependency terminal UI toolkit for the Alya language ecosystem: ANS
 - ⚡ **Lightweight & Fast**: Built for speed with minimal overhead (>25M ops/sec for ANSI processing)
 - 📊 **Dynamic Tables**: Auto-sizing columns, custom alignment (Left, Center, Right), multi-line cell support, and maximum column width truncation
 - 🎨 **7 Border Presets**: `unicode` (┌─┬─┐), `rounded` (╭─┬─╮), `double` (╔═╦═╗), `ascii` (+-++), `markdown` (|---|), `compact`, and `none`
-- 🌈 **ANSI-Aware Formatting**: Accurately measures printable visual width (`visible_len`) using `strip_ansi()`, ensuring colored badges and styled text never misalign table columns
+- 🌈 **ANSI & UTF-8 Aware**: Accurately measures printable visual width (`visible_len`) ignoring ANSI escapes and correctly counting multi-byte UTF-8 code points
+- 🌳 **Tree Hierarchies**: Render nested directory trees and AST structures with Unicode connectors (`├── `, `└── `, `│   `)
+- 📏 **Horizontal Rules & KV Lists**: Beautiful styled dividers (`hr()`) and aligned key-value summaries with dot leaders (`kv()`)
+- 📈 **Mini Visualizations**: Compact inline sparklines (` ▂▃▄▅▆▇█`) and horizontal percentage bar charts
 - 💬 **Callout Banners**: Message boxes with embedded titles and pre-styled helpers (`box_info`, `box_success`, `box_warn`, `box_error`)
-- ⏳ **Progress & Spinners**: Customizable progress bars with percentage/counts and animated spinner frames (`dots`, `line`, `pulse`, `arrows`, `blocks`)
-- ❓ **Interactive Prompts**: Clean CLI inputs: `prompt()`, `confirm()` (`[y/N]`), and numbered `select()`
+- 🚦 **Status Loggers & Badges**: Standard CLI outputs with distinctive icons (`success`, `warn`, `error`, `info`, `step`)
+- ⏳ **Progress & Spinners**: Customizable progress bars and animated spinner frames (`dots`, `line`, `pulse`, `arrows`, `blocks`)
+- 🖥️ **Cursor & Screen Controls**: Full ANSI cursor positioning, visibility toggle, and screen/line clearing
+- ❓ **Interactive Prompts**: Clean CLI inputs: `prompt()`, `confirm()`, `select()`, `password()`, `multi_select()`, and validated numbers
 - 🔄 **100% Backward Compatible**: Direct drop-in replacement for the legacy `term_table` package (`cell()`, `box_top()`, `box_mid()`, `box_bot()`, `row()`, `badge()`)
-- 🧪 **Well Tested**: Comprehensive 6-suite automated test coverage with standard assertions
+- 🧪 **Comprehensive Test Suite**: 11 automated test suites with 100% pass rate
 
 ---
 
@@ -30,29 +35,40 @@ term/
 ├── alya.toml               # Package manifest
 ├── src/
 │   ├── lib.alya            # Public API facade & convenience constructors
-│   ├── types.alya          # Data structures & constants (ALIGN_*, BORDER_*)
+│   ├── types.alya          # Data structures & constants (ALIGN_*, BORDER_*, TreeNode)
 │   ├── style.alya          # ANSI colors, text modifiers, visible_len, and badges
 │   ├── border.alya         # Border style character presets
 │   ├── table.alya          # Dynamic table formatter and builder engine
 │   ├── box.alya            # Message callout banner generator
+│   ├── tree.alya           # Unicode hierarchy tree renderer
+│   ├── rule.alya           # Horizontal rules and aligned key-value pairs
+│   ├── chart.alya          # Sparklines and horizontal percentage bar charts
+│   ├── status.alya         # Status loggers and standard Unicode icons
+│   ├── cursor.alya         # Terminal cursor movement and screen clearing
+│   ├── live.alya           # In-place terminal line updating helpers
 │   ├── progress.alya       # Progress bar and spinner indicators
-│   ├── prompt.alya         # Interactive terminal prompts (ask, confirm, select)
+│   ├── prompt.alya         # Interactive terminal prompts (ask, confirm, select, password)
 │   └── compat.alya         # Drop-in compatibility layer with legacy term_table
 ├── examples/
-│   └── demo.alya           # Runnable usage examples
+│   └── demo.alya           # Runnable showcase demo
 ├── tests/                  # Automated test suites
 │   ├── test_basic.alya
 │   ├── test_box.alya
+│   ├── test_chart.alya
 │   ├── test_compat.alya
+│   ├── test_cursor.alya
 │   ├── test_progress.alya
+│   ├── test_rule.alya
+│   ├── test_status.alya
 │   ├── test_style.alya
-│   └── test_table.alya
+│   ├── test_table.alya
+│   └── test_tree.alya
 └── benches/
     └── bench_basic.alya    # Micro-benchmarks
 ```
 
 > [!NOTE]
-> **Modular Source Architecture:** Modules are structured cleanly inside `src/` (`src/table.alya`, `src/style.alya`, `src/box.alya`, `src/progress.alya`, `src/prompt.alya`, `src/compat.alya`). All public APIs are exported via `src/lib.alya` for clean, namespaced imports.
+> **Modular Source Architecture:** Modules are structured cleanly inside `src/`. All public APIs are exported via `src/lib.alya` for clean, namespaced imports.
 
 ---
 
@@ -177,6 +193,59 @@ main()
 | `badge(text, color)` | `text: string, color = "green"` | `string` | Renders a styled colored badge. |
 | `tag(label, val, color)` | `label: string, val: string, color = "cyan"` | `string` | Renders a `[label: val]` tag badge. |
 
+### Tree Hierarchies
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `tree(root)` | `root: TreeNode` | `string` | Renders a hierarchical data tree with Unicode connectors (`├──`, `└──`, `│   `). |
+| `node(label, children)` | `label: string, children = []` | `TreeNode` | Creates a parent tree node with nested children. |
+| `leaf(label)` | `label: string` | `TreeNode` | Creates a terminal leaf node with no children. |
+
+### Horizontal Rules & Key-Value Lists
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `hr(title, width, style)` | `title = "", width = 60, style = "single"` | `string` | Renders a horizontal divider rule (`"single"`, `"double"`, `"dashed"`, `"dotted"`, `"thick"`, `"wave"`). |
+| `kv(key, value, width, leader)` | `key, value, width = 40, leader = "."` | `string` | Aligns key and value with dot leader characters. |
+| `kv_list(pairs, width, leader)` | `pairs: array, width = 40, leader = "."` | `string` | Formats multiple key-value pairs into an aligned summary block. |
+
+### Mini Visualizations
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `spark(values, min, max)` | `values: array, min = null, max = null` | `string` | Generates a compact inline sparkline graph using Unicode blocks (` ▂▃▄▅▆▇█`). |
+| `bar(label, val, max, width)` | `label, val, max, width = 20` | `string` | Renders a horizontal percentage bar chart with labels and counters. |
+
+### Status Loggers & Badges
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `success(msg)` / `log_success(msg)` | `msg: string` | `void` | Prints a green success message with checkmark icon (`✔ [SUCCESS]`). |
+| `warn(msg)` / `log_warn(msg)` | `msg: string` | `void` | Prints a yellow warning message with warning icon (`⚠ [WARNING]`). |
+| `error(msg)` / `log_error(msg)` | `msg: string` | `void` | Prints a red error message with cross icon (`✖ [ERROR]  `). |
+| `info(msg)` / `log_info(msg)` | `msg: string` | `void` | Prints a cyan info message with info icon (`ℹ [INFO]   `). |
+| `step(cur, tot, msg)` | `cur: int, tot: int, msg: string` | `void` | Prints a step counter with arrow icon (`➔ [1/3]`). |
+| `format_<type>(msg)` | `msg: string` | `string` | String formatter variants returning styled strings instead of printing. |
+
+### Cursor & Screen Controls
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `cursor_to(row, col)` | `row: int, col: int` | `string` | Returns ANSI escape sequence to place cursor at row and column. |
+| `cursor_up(n)` / `cursor_down(n)` | `n = 1` | `string` | Moves cursor up or down by `n` lines. |
+| `cursor_right(n)` / `cursor_left(n)` | `n = 1` | `string` | Moves cursor forward or backward by `n` columns. |
+| `cursor_hide()` / `cursor_show()` | *(none)* | `string` | Toggles terminal cursor visibility. |
+| `clear_screen()` | *(none)* | `string` | Clears entire screen and resets cursor to top-left home. |
+| `clear_line()` | *(none)* | `string` | Clears entire current line and resets carriage to column 0. |
+
+### Live In-Place Updates
+
+| Function | Arguments | Returns | Description |
+|---|---|---|---|
+| `live_start(initial_text)` | `initial_text = ""` | `void` | Initializes a live terminal line. |
+| `live_update(text)` | `text: string` | `void` | Overwrites the previous terminal line in-place without scrolling. |
+| `live_finish(text)` | `text: string` | `void` | Finalizes the live terminal line. |
+
 ### Interactive Prompts
 
 | Function | Arguments | Returns | Description |
@@ -184,6 +253,10 @@ main()
 | `prompt(msg, default_val)` | `msg: string, default_val = ""` | `string` | Prompts user for text input with optional default value. |
 | `confirm(msg, default_yes)` | `msg: string, default_yes = 1` | `int` | Asks yes/no confirmation question (returns `1` or `0`). |
 | `select(msg, options, default_idx)` | `msg: string, options: array, default_idx = 0` | `string` | Displays numbered selection menu and returns chosen option string. |
+| `password(msg, mask)` | `msg: string, mask = "*"` | `string` | Secure password prompt using ANSI concealment and optional masking. |
+| `multi_select(msg, opts, defaults)` | `msg: string, opts: array, defaults = []` | `array` | Checkbox-style multi-selection prompt with comma-separated inputs. |
+| `prompt_required(msg, err_msg)` | `msg: string, err_msg = "..."` | `string` | Prompts continuously until non-empty input is received. |
+| `prompt_number(msg, min, max, def)` | `msg: string, min = 0, max = MAX, def = 0` | `int` | Prompts continuously until valid integer in range is entered. |
 
 ---
 
