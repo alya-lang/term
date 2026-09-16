@@ -18,7 +18,7 @@ end
 
 # Formats a horizontal divider line with optional title
 # Styles: "single", "double", "dashed", "dotted", "thick", "wave"
-function rule(title = "", width = 60, style_name = "single")
+pub function rule(title = "", width = 60, style_name = "single")
     if width <= 0
         width = 60
     end
@@ -56,7 +56,7 @@ end
 
 # Formats a key-value pair aligned with leader characters (e.g. dots or spaces)
 # Example: "Compiler .......................... alyac 0.0.16"
-function kv(key, value, width = 40, leader = ".")
+pub function kv(key, value, width = 40, leader = ".")
     if width <= 0
         width = 40
     end
@@ -76,7 +76,7 @@ function kv(key, value, width = 40, leader = ".")
 end
 
 # Formats an array of [key, value] pairs into an aligned key-value block
-function kv_list(pairs, width = 40, leader = ".")
+pub function kv_list(pairs, width = 40, leader = ".")
     let count = len(pairs)
     if count == 0
         return ""

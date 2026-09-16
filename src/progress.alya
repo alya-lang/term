@@ -4,7 +4,7 @@
 import "./types.alya"
 import "./style.alya"
 
-function progress_bar_new(total, width = 30, filled_char = "=", empty_char = " ", head_char = ">", color_prefix = "")
+pub function progress_bar_new(total, width = 30, filled_char = "=", empty_char = " ", head_char = ">", color_prefix = "")
     if total <= 0
         total = 1
     end
@@ -28,7 +28,7 @@ function _prog_repeat(ch, count)
 end
 
 # Formats a progress bar string: "[===========>          ] 55% (55/100)"
-function progress_bar_render(pb, current)
+pub function progress_bar_render(pb, current)
     pb.current = current
     let tot = pb.total
     if tot <= 0
@@ -92,13 +92,13 @@ function progress_bar_render(pb, current)
 end
 
 # Quick helper without struct instantiation
-function progress_bar(current, total, width = 30)
+pub function progress_bar(current, total, width = 30)
     let pb = progress_bar_new(total, width)
     return progress_bar_render(pb, current)
 end
 
 # Returns an animated spinner glyph for a given step and style
-function spinner_char(step, style_name = "dots")
+pub function spinner_char(step, style_name = "dots")
     when style_name
         is "line" then
             let frames = ["|", "/", "-", "\\"]
@@ -116,4 +116,10 @@ function spinner_char(step, style_name = "dots")
             let frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
             return frames[step % 10]
     end
+end
+
+# --- Struct Methods (Alya v0.0.18) ---
+
+pub function ProgressBar.render(self, current)
+    return progress_bar_render(self, current)
 end

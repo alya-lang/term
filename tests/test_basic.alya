@@ -45,6 +45,28 @@ function main()
     # 9. Cursor Controls
     runner_assert_str_eq(r, term::cursor_hide(), "\e[?25l", "cursor_hide generates escape code")
 
+    # 10. v0.0.18 Enums and Struct Methods
+    runner_assert_str_eq(r, term::BorderStyle.Unicode, "unicode", "BorderStyle.Unicode is unicode")
+    runner_assert_eq(r, term::Alignment.Left, 0, "Alignment.Left is 0")
+    runner_assert_eq(r, term::Color.Green, 32, "Color.Green is 32")
+    runner_assert_eq(r, term::Style.Bold, 1, "Style.Bold is 1")
+
+    let t_method = term::table(["A", "B"], [["1", "2"]])
+    let t_m_out = t_method.render()
+    runner_assert(r, len(t_m_out) > 0, "Table.render struct method works")
+
+    let cb_method = term::callout("Content", "Title")
+    let cb_m_out = cb_method.render()
+    runner_assert(r, len(cb_m_out) > 0, "CalloutBox.render struct method works")
+
+    let pb_method = term::progress_bar_new(100, 20)
+    let pb_m_out = pb_method.render(50)
+    runner_assert(r, len(pb_m_out) > 0, "ProgressBar.render struct method works")
+
+    let tr_method = term::node("root", [term::leaf("child")])
+    let tr_m_out = tr_method.render()
+    runner_assert(r, len(tr_m_out) > 0, "TreeNode.render struct method works")
+
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

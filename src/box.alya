@@ -5,12 +5,12 @@ import "./types.alya"
 import "./style.alya"
 import "./border.alya"
 
-function box_new(content, title = "", border_name = "rounded", color_prefix = "", padding_x = 1, min_width = 0)
+pub function box_new(content, title = "", border_name = "rounded", color_prefix = "", padding_x = 1, min_width = 0)
     let b_chars = border_get(border_name)
     return CalloutBox(content, title, b_chars, color_prefix, padding_x, min_width)
 end
 
-function _box_split_lines(text)
+pub function _box_split_lines(text)
     let s = str(text)
     let slen = len(s)
     let res = []
@@ -53,17 +53,14 @@ function _box_repeat(ch, count)
     return res
 end
 
-function box_render(cb)
+pub function box_render(cb)
     let content_lines = _box_split_lines(cb.content)
     let max_line_w = 0
-    let i = 0
-    let nlines = len(content_lines)
-    while i < nlines
-        let lw = visible_len(content_lines[i])
+    for line in content_lines
+        let lw = visible_len(line)
         if lw > max_line_w
             max_line_w = lw
         end
-        i += 1
     end
 
     let title_str = str(cb.title)
@@ -111,9 +108,7 @@ function box_render(cb)
 
     # 2. Content lines
     let pad_str = _box_repeat(" ", pad_w)
-    i = 0
-    while i < nlines
-        let line = content_lines[i]
+    for line in content_lines
         let vlen = visible_len(line)
         let trailing_spaces = max_line_w - vlen
         if trailing_spaces < 0
@@ -121,7 +116,6 @@ function box_render(cb)
         end
         let row_line = col + b.vert + reset + pad_str + line + _box_repeat(" ", trailing_spaces) + pad_str + col + b.vert + reset
         out.push(row_line)
-        i += 1
     end
 
     # 3. Bottom border
@@ -130,7 +124,7 @@ function box_render(cb)
 
     # Join with newlines
     let res = ""
-    i = 0
+    let i = 0
     let total = len(out)
     while i < total
         res += out[i]
@@ -142,28 +136,38 @@ function box_render(cb)
     return res
 end
 
-function box_print(cb)
+pub function box_print(cb)
     say box_render(cb)
 end
 
 # --- Pre-styled Callout Boxes ---
 
-function box_info(content, title = "INFO")
+pub function box_info(content, title = "INFO")
     let b = box_new(content, title, "rounded", "\e[36m") # Cyan
     return box_render(b)
 end
 
-function box_success(content, title = "SUCCESS")
+pub function box_success(content, title = "SUCCESS")
     let b = box_new(content, title, "rounded", "\e[32m") # Green
     return box_render(b)
 end
 
-function box_warn(content, title = "WARNING")
+pub function box_warn(content, title = "WARNING")
     let b = box_new(content, title, "rounded", "\e[33m") # Yellow
     return box_render(b)
 end
 
-function box_error(content, title = "ERROR")
+pub function box_error(content, title = "ERROR")
     let b = box_new(content, title, "rounded", "\e[31m") # Red
     return box_render(b)
+end
+
+# --- Struct Methods (Alya v0.0.18) ---
+
+pub function CalloutBox.render(self)
+    return box_render(self)
+end
+
+pub function CalloutBox.print(self)
+    box_print(self)
 end

@@ -7,12 +7,12 @@ import "./border.alya"
 
 # --- Table Factory ---
 
-function table_new(border_style_name = "unicode")
+pub function table_new(border_style_name = "unicode")
     let b = border_get(border_style_name)
     return Table([], [], [], [], b, 1, 1, 1, 1)
 end
 
-function table_create(headers = [], rows = [], border_style_name = "unicode")
+pub function table_create(headers = [], rows = [], border_style_name = "unicode")
     let t = table_new(border_style_name)
     t.headers = headers
     t.rows = rows
@@ -21,57 +21,54 @@ end
 
 # --- Table Configuration Setters ---
 
-function table_set_headers(tbl, headers)
+pub function table_set_headers(tbl, headers)
     tbl.headers = headers
     return tbl
 end
 
-function table_add_row(tbl, row)
+pub function table_add_row(tbl, row)
     tbl.rows.push(row)
     return tbl
 end
 
-function table_add_rows(tbl, rows)
-    let i = 0
-    let rlen = len(rows)
-    while i < rlen
-        tbl.rows.push(rows[i])
-        i += 1
+pub function table_add_rows(tbl, rows)
+    for row in rows
+        tbl.rows.push(row)
     end
     return tbl
 end
 
-function table_set_border(tbl, border_name)
+pub function table_set_border(tbl, border_name)
     tbl.border_chars = border_get(border_name)
     return tbl
 end
 
-function table_set_border_chars(tbl, border_chars)
+pub function table_set_border_chars(tbl, border_chars)
     tbl.border_chars = border_chars
     return tbl
 end
 
-function table_set_alignments(tbl, aligns)
+pub function table_set_alignments(tbl, aligns)
     tbl.alignments = aligns
     return tbl
 end
 
-function table_set_max_widths(tbl, max_widths)
+pub function table_set_max_widths(tbl, max_widths)
     tbl.max_widths = max_widths
     return tbl
 end
 
-function table_set_padding(tbl, pad)
+pub function table_set_padding(tbl, pad)
     tbl.padding = pad
     return tbl
 end
 
-function table_set_show_headers(tbl, show)
+pub function table_set_show_headers(tbl, show)
     tbl.show_headers = show
     return tbl
 end
 
-function table_set_show_borders(tbl, show)
+pub function table_set_show_borders(tbl, show)
     tbl.show_borders = show
     return tbl
 end
@@ -125,14 +122,75 @@ function _truncate_cell(s, max_len)
     if max_len <= 0
         return ""
     end
-    let clean = strip_ansi(s)
-    if len(clean) <= max_len
-        return s
+    let s_str = str(s)
+    let slen = len(s_str)
+    let vis = 0
+    let cut_idx = 0
+    while cut_idx < slen
+        let ch = char_at(s_str, cut_idx)
+        let ch_vis = visible_len(ch)
+        if vis + ch_vis > max_len
+            return s_str[0..cut_idx]
+        end
+        vis += ch_vis
+        cut_idx += 1
     end
-    if len(s) == len(clean)
-        return substring(s, 0, max_len)
+    return s_str
+end
+
+function _calc_column_widths(tbl)
+    let widths = []
+    let col_count = len(tbl.headers)
+
+    for r in tbl.rows
+        if len(r) > col_count
+            col_count = len(r)
+        end
     end
-    return substring(clean, 0, max_len)
+
+    if col_count == 0
+        return widths
+    end
+
+    let c = 0
+    while c < col_count
+        widths.push(0)
+        c += 1
+    end
+
+    # Measure header lengths
+    if tbl.show_headers
+        let hlen = len(tbl.headers)
+        c = 0
+        while c < hlen
+            let sublines = _split_lines(tbl.headers[c])
+            for line in sublines
+                let w = visible_len(line)
+                if w > widths[c]
+                    widths[c] = w
+                end
+            end
+            c += 1
+        end
+    end
+
+    # Measure rows lengths
+    for r in tbl.rows
+        let row_len = len(r)
+        c = 0
+        while c < row_len
+            let sublines = _split_lines(r[c])
+            for line in sublines
+                let w = visible_len(line)
+                if w > widths[c]
+                    widths[c] = w
+                end
+            end
+            c += 1
+        end
+    end
+
+    return widths
 end
 
 function _format_cell(text, target_width, align, pad_spaces)
@@ -154,10 +212,10 @@ function _format_cell(text, target_width, align, pad_spaces)
     let pad_left_count = 0
     let pad_right_count = 0
     when align
-        is 1 then # ALIGN_CENTER
+        is Alignment.Center, 1 then # ALIGN_CENTER
             pad_left_count = diff / 2
             pad_right_count = diff - pad_left_count
-        is 2 then # ALIGN_RIGHT
+        is Alignment.Right, 2 then # ALIGN_RIGHT
             pad_left_count = diff
             pad_right_count = 0
         else # ALIGN_LEFT
@@ -186,73 +244,27 @@ function _make_border_line(widths, left_ch, mid_ch, right_ch, horiz_ch, pad_size
     return res
 end
 
-# --- Table Rendering Engine ---
+# --- Main Table Rendering ---
 
-function table_render(tbl)
-    let col_count = len(tbl.headers)
+pub function table_render(tbl)
+    let hlen = len(tbl.headers)
     let rlen = len(tbl.rows)
-    let r = 0
-    while r < rlen
-        let row = tbl.rows[r]
-        if len(row) > col_count
-            col_count = len(row)
-        end
-        r += 1
-    end
 
-    if col_count == 0
+    if hlen == 0 and rlen == 0
         return ""
     end
 
-    # 1. Calculate natural column widths
-    let widths = []
-    let c = 0
-    while c < col_count
-        widths.push(0)
-        c += 1
-    end
-
-    if tbl.show_headers and len(tbl.headers) > 0
-        c = 0
-        let hlen = len(tbl.headers)
-        while c < col_count
-            if c < hlen
-                let hw = visible_len(tbl.headers[c])
-                if hw > widths[c]
-                    widths[c] = hw
-                end
-            end
-            c += 1
-        end
-    end
-
-    r = 0
-    while r < rlen
-        let row = tbl.rows[r]
-        let row_cols = len(row)
-        c = 0
-        while c < col_count
-            if c < row_cols
-                let cell_lines = _split_lines(row[c])
-                let line_idx = 0
-                let num_lines = len(cell_lines)
-                while line_idx < num_lines
-                    let lw = visible_len(cell_lines[line_idx])
-                    if lw > widths[c]
-                        widths[c] = lw
-                    end
-                    line_idx += 1
-                end
-            end
-            c += 1
-        end
-        r += 1
+    # 1. Compute natural column widths
+    let widths = _calc_column_widths(tbl)
+    let col_count = len(widths)
+    if col_count == 0
+        return ""
     end
 
     # 2. Clamp column widths if max_widths specified
     let mw_len = len(tbl.max_widths)
     if mw_len > 0
-        c = 0
+        let c = 0
         while c < col_count
             if c < mw_len and tbl.max_widths[c] > 0
                 if widths[c] > tbl.max_widths[c]
@@ -264,7 +276,7 @@ function table_render(tbl)
     end
 
     # Ensure minimum width of 1 per column
-    c = 0
+    let c = 0
     while c < col_count
         if widths[c] < 1
             widths[c] = 1
@@ -289,7 +301,6 @@ function table_render(tbl)
     if tbl.show_headers and len(tbl.headers) > 0
         let h_line = vert_ch
         c = 0
-        let hlen = len(tbl.headers)
         while c < col_count
             let h_val = ""
             if c < hlen
@@ -317,7 +328,7 @@ function table_render(tbl)
     end
 
     # 5. Render Data Rows (Multi-line cell supported)
-    r = 0
+    let r = 0
     while r < rlen
         let row = tbl.rows[r]
         let row_cols = len(row)
@@ -389,6 +400,65 @@ function table_render(tbl)
     return result
 end
 
-function table_print(tbl)
+pub function table_print(tbl)
     say table_render(tbl)
+end
+
+# --- Struct Methods (Alya v0.0.18) ---
+
+pub function Table.set_headers(self, headers)
+    return table_set_headers(self, headers)
+end
+
+pub function Table.add_row(self, row)
+    return table_add_row(self, row)
+end
+
+pub function Table.add_rows(self, rows)
+    return table_add_rows(self, rows)
+end
+
+pub function Table.set_border(self, border_name)
+    return table_set_border(self, border_name)
+end
+
+pub function Table.set_alignments(self, aligns)
+    return table_set_alignments(self, aligns)
+end
+
+pub function Table.set_max_widths(self, max_widths)
+    return table_set_max_widths(self, max_widths)
+end
+
+pub function Table.set_padding(self, pad)
+    return table_set_padding(self, pad)
+end
+
+pub function Table.set_show_headers(self, show)
+    return table_set_show_headers(self, show)
+end
+
+pub function Table.set_show_borders(self, show)
+    return table_set_show_borders(self, show)
+end
+
+pub function Table.render(self)
+    return table_render(self)
+end
+
+pub function Table.print(self)
+    table_print(self)
+end
+
+# TermTable struct methods (alias compatibility)
+pub function TermTable.render(self)
+    return table_render(self)
+end
+
+pub function TermTable.add_row(self, row)
+    return table_add_row(self, row)
+end
+
+pub function TermTable.print(self)
+    table_print(self)
 end

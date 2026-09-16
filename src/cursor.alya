@@ -4,12 +4,12 @@
 # --- Cursor Movement ---
 
 # Move cursor to absolute row and column (1-indexed)
-function cursor_to(row, col)
+pub function cursor_to(row, col)
     return "\e[" + str(row) + ";" + str(col) + "H"
 end
 
 # Move cursor up by n lines
-function cursor_up(n = 1)
+pub function cursor_up(n = 1)
     if n <= 0
         return ""
     end
@@ -17,7 +17,7 @@ function cursor_up(n = 1)
 end
 
 # Move cursor down by n lines
-function cursor_down(n = 1)
+pub function cursor_down(n = 1)
     if n <= 0
         return ""
     end
@@ -25,67 +25,67 @@ function cursor_down(n = 1)
 end
 
 # Move cursor forward/right by n columns
-function cursor_forward(n = 1)
+pub function cursor_forward(n = 1)
     if n <= 0
         return ""
     end
     return "\e[" + str(n) + "C"
 end
 
-function cursor_right(n = 1)
+pub function cursor_right(n = 1)
     return cursor_forward(n)
 end
 
 # Move cursor back/left by n columns
-function cursor_back(n = 1)
+pub function cursor_back(n = 1)
     if n <= 0
         return ""
     end
     return "\e[" + str(n) + "D"
 end
 
-function cursor_left(n = 1)
+pub function cursor_left(n = 1)
     return cursor_back(n)
 end
 
 # Save current cursor position
-function cursor_save()
+pub function cursor_save()
     return "\e[s"
 end
 
 # Restore saved cursor position
-function cursor_restore()
+pub function cursor_restore()
     return "\e[u"
 end
 
 # Hide cursor
-function cursor_hide()
+pub function cursor_hide()
     return "\e[?25l"
 end
 
 # Show cursor
-function cursor_show()
+pub function cursor_show()
     return "\e[?25h"
 end
 
 # --- Screen & Line Clearing ---
 
 # Clear entire terminal screen and reset cursor to home (1, 1)
-function clear_screen()
+pub function clear_screen()
     return "\e[2J\e[H"
 end
 
 # Clear current line entirely and return carriage to column 0
-function clear_line()
+pub function clear_line()
     return "\e[2K\r"
 end
 
 # Clear from cursor to end of current line
-function clear_to_end()
+pub function clear_to_end()
     return "\e[K"
 end
 
 # Clear from cursor to beginning of current line
-function clear_to_start()
+pub function clear_to_start()
     return "\e[1K"
 end

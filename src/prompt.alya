@@ -4,7 +4,7 @@
 import "./style.alya"
 
 # Prompts for text input with optional default value
-function prompt_text(message, default_val = "")
+pub function prompt_text(message, default_val = "")
     let prompt_str = color_cyan("?") + " " + style_bold(message)
     if len(str(default_val)) > 0
         prompt_str += color_gray(" [" + str(default_val) + "]")
@@ -18,7 +18,7 @@ function prompt_text(message, default_val = "")
 end
 
 # Asks a confirmation question. Returns 1 for yes, 0 for no.
-function prompt_confirm(message, default_yes = 1)
+pub function prompt_confirm(message, default_yes = 1)
     let suffix = " (Y/n): "
     if default_yes == 0
         suffix = " (y/N): "
@@ -28,14 +28,14 @@ function prompt_confirm(message, default_yes = 1)
     if len(resp) == 0
         return default_yes
     end
-    if resp == "y" or resp == "yes" or resp == "1" or resp == "e" or resp == "evet" or resp == "true"
-        return 1
+    when resp
+        is "y", "yes", "1", "e", "evet", "true" then return 1
+        else return 0
     end
-    return 0
 end
 
 # Prompts the user to select one option from a list
-function prompt_select(message, options, default_idx = 0)
+pub function prompt_select(message, options, default_idx = 0)
     let opt_count = len(options)
     if opt_count == 0
         return ""
@@ -87,7 +87,7 @@ function _prompt_repeat(ch, count)
 end
 
 # Prompts for password / secret input using ANSI concealment
-function prompt_password(message, mask = "*")
+pub function prompt_password(message, mask = "*")
     let prompt_str = color_yellow("🔒") + " " + style_bold(message) + ": \e[8m"
     let pass = trim(ask(prompt_str))
     say "\e[0m\e[1A\r" + color_yellow("🔒") + " " + style_bold(message) + ": " + color_gray(_prompt_repeat(mask, len(pass)))
@@ -95,7 +95,7 @@ function prompt_password(message, mask = "*")
 end
 
 # Prompts for non-empty text input
-function prompt_non_empty(message, error_msg = "Value cannot be empty.")
+pub function prompt_non_empty(message, error_msg = "Value cannot be empty.")
     while 1
         let ans = prompt_text(message)
         if len(trim(ans)) > 0
@@ -107,7 +107,7 @@ function prompt_non_empty(message, error_msg = "Value cannot be empty.")
 end
 
 # Prompts for integer number within range
-function prompt_int(message, min_val = 0, max_val = 2147483647, default_val = 0)
+pub function prompt_int(message, min_val = 0, max_val = 2147483647, default_val = 0)
     let prompt_str = message + " [" + str(min_val) + "-" + str(max_val) + "]"
     while 1
         let raw = prompt_text(prompt_str, default_val)
@@ -121,7 +121,7 @@ function prompt_int(message, min_val = 0, max_val = 2147483647, default_val = 0)
 end
 
 # Prompts the user to select multiple options (comma-separated indices)
-function prompt_multi_select(message, options, default_indices = [])
+pub function prompt_multi_select(message, options, default_indices = [])
     let opt_count = len(options)
     if opt_count == 0
         return []
@@ -130,12 +130,8 @@ function prompt_multi_select(message, options, default_indices = [])
     let i = 0
     while i < opt_count
         let is_def = 0
-        let d_idx = 0
-        while d_idx < len(default_indices)
-            if default_indices[d_idx] == i
-                is_def = 1
-            end
-            d_idx += 1
+        if i in default_indices
+            is_def = 1
         end
         let box = "[ ]"
         if is_def == 1
@@ -151,29 +147,24 @@ function prompt_multi_select(message, options, default_indices = [])
     let raw = trim(ask(prompt_str))
     if len(raw) == 0
         let res = []
-        let k = 0
-        while k < len(default_indices)
-            let idx = default_indices[k]
+        for idx in default_indices
             if idx >= 0 and idx < opt_count
                 res.push(options[idx])
             end
-            k += 1
         end
         return res
     end
 
     let parts = split(raw, ",")
     let selected = []
-    let p_idx = 0
-    while p_idx < len(parts)
-        let item = trim(parts[p_idx])
+    for item_part in parts
+        let item = trim(item_part)
         if len(item) > 0
             let num = int(item)
             if num >= 1 and num <= opt_count
                 selected.push(options[num - 1])
             end
         end
-        p_idx += 1
     end
     return selected
 end

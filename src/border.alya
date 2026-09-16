@@ -3,43 +3,43 @@
 
 import "./types.alya"
 
-function border_unicode()
+pub function border_unicode()
     return BorderChars("┌", "┬", "┐", "└", "┴", "┘", "├", "┼", "┤", "─", "│")
 end
 
-function border_rounded()
+pub function border_rounded()
     return BorderChars("╭", "┬", "╮", "╰", "┴", "╯", "├", "┼", "┤", "─", "│")
 end
 
-function border_double()
+pub function border_double()
     return BorderChars("╔", "╦", "╗", "╚", "╩", "╝", "╠", "╬", "╣", "═", "║")
 end
 
-function border_ascii()
+pub function border_ascii()
     return BorderChars("+", "+", "+", "+", "+", "+", "+", "+", "+", "-", "|")
 end
 
-function border_markdown()
+pub function border_markdown()
     return BorderChars("|", "|", "|", "|", "|", "|", "|", "|", "|", "-", "|")
 end
 
-function border_compact()
+pub function border_compact()
     return BorderChars("", "", "", "", "", "", "", "", "", "─", " ")
 end
 
-function border_none()
+pub function border_none()
     return BorderChars("", "", "", "", "", "", "", "", "", " ", " ")
 end
 
-function border_get(name)
+pub function border_get(name)
     when name
-        is "unicode" then return border_unicode()
-        is "rounded" then return border_rounded()
-        is "double" then return border_double()
-        is "ascii" then return border_ascii()
-        is "markdown" then return border_markdown()
-        is "compact" then return border_compact()
-        is "none" then return border_none()
+        is BorderStyle.Unicode, "unicode" then return border_unicode()
+        is BorderStyle.Rounded, "rounded" then return border_rounded()
+        is BorderStyle.Double, "double"   then return border_double()
+        is BorderStyle.Ascii, "ascii"     then return border_ascii()
+        is BorderStyle.Markdown, "markdown" then return border_markdown()
+        is BorderStyle.Compact, "compact" then return border_compact()
+        is BorderStyle.None, "none"       then return border_none()
         else return border_unicode()
     end
 end

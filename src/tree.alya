@@ -4,11 +4,11 @@
 import "./types.alya"
 import "./style.alya"
 
-function tree_node(label, children = [])
+pub function tree_node(label, children = [])
     return TreeNode(str(label), children)
 end
 
-function tree_leaf(label)
+pub function tree_leaf(label)
     let empty_children = []
     return TreeNode(str(label), empty_children)
 end
@@ -24,9 +24,9 @@ function _tree_walk(node, prefix, is_last, is_root, out_lines)
         let connector = "├── "
         if is_last == 1
             connector = "└── "
-            next_prefix = prefix + "    "
+            next_prefix += "    "
         else
-            next_prefix = prefix + "│   "
+            next_prefix += "│   "
         end
         out_lines.push(prefix + connector + label)
     end
@@ -44,7 +44,7 @@ function _tree_walk(node, prefix, is_last, is_root, out_lines)
     end
 end
 
-function tree_render(root)
+pub function tree_render(root)
     let lines = []
     _tree_walk(root, "", 1, 1, lines)
     let res = ""
@@ -61,6 +61,17 @@ function tree_render(root)
     return res
 end
 
-function tree(root)
+pub function tree(root)
     return tree_render(root)
+end
+
+# --- Struct Methods (Alya v0.0.18) ---
+
+pub function TreeNode.render(self)
+    return tree_render(self)
+end
+
+pub function TreeNode.add_child(self, child)
+    self.children.push(child)
+    return self
 end

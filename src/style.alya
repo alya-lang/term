@@ -2,67 +2,68 @@
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
 import "std/color" as c
+import "./types.alya"
 
 # --- Basic Foreground Colors (Delegated to std/color) ---
-function color_black(s) return c::color_black(s) end
-function color_red(s) return c::color_red(s) end
-function color_green(s) return c::color_green(s) end
-function color_yellow(s) return c::color_yellow(s) end
-function color_blue(s) return c::color_blue(s) end
-function color_magenta(s) return c::color_magenta(s) end
-function color_cyan(s) return c::color_cyan(s) end
-function color_white(s) return c::color_white(s) end
-function color_gray(s) return c::color_gray(s) end
+pub function color_black(s) return c::color_black(s) end
+pub function color_red(s) return c::color_red(s) end
+pub function color_green(s) return c::color_green(s) end
+pub function color_yellow(s) return c::color_yellow(s) end
+pub function color_blue(s) return c::color_blue(s) end
+pub function color_magenta(s) return c::color_magenta(s) end
+pub function color_cyan(s) return c::color_cyan(s) end
+pub function color_white(s) return c::color_white(s) end
+pub function color_gray(s) return c::color_gray(s) end
 
 # --- Bright Foreground Colors ---
-function color_bright_red(s) return c::color_bright_red(s) end
-function color_bright_green(s) return c::color_bright_green(s) end
-function color_bright_yellow(s) return c::color_bright_yellow(s) end
-function color_bright_blue(s) return c::color_bright_blue(s) end
-function color_bright_magenta(s) return c::color_bright_magenta(s) end
-function color_bright_cyan(s) return c::color_bright_cyan(s) end
-function color_bright_white(s) return c::color_bright_white(s) end
+pub function color_bright_red(s) return c::color_bright_red(s) end
+pub function color_bright_green(s) return c::color_bright_green(s) end
+pub function color_bright_yellow(s) return c::color_bright_yellow(s) end
+pub function color_bright_blue(s) return c::color_bright_blue(s) end
+pub function color_bright_magenta(s) return c::color_bright_magenta(s) end
+pub function color_bright_cyan(s) return c::color_bright_cyan(s) end
+pub function color_bright_white(s) return c::color_bright_white(s) end
 
 # --- Background Colors ---
-function bg_black(s) return c::bg_black(s) end
-function bg_red(s) return c::bg_red(s) end
-function bg_green(s) return c::bg_green(s) end
-function bg_yellow(s) return c::bg_yellow(s) end
-function bg_blue(s) return c::bg_blue(s) end
-function bg_magenta(s) return c::bg_magenta(s) end
-function bg_cyan(s) return c::bg_cyan(s) end
-function bg_white(s) return c::bg_white(s) end
+pub function bg_black(s) return c::bg_black(s) end
+pub function bg_red(s) return c::bg_red(s) end
+pub function bg_green(s) return c::bg_green(s) end
+pub function bg_yellow(s) return c::bg_yellow(s) end
+pub function bg_blue(s) return c::bg_blue(s) end
+pub function bg_magenta(s) return c::bg_magenta(s) end
+pub function bg_cyan(s) return c::bg_cyan(s) end
+pub function bg_white(s) return c::bg_white(s) end
 
 # --- Text Modifiers ---
-function style_bold(s) return c::style_bold(s) end
-function style_dim(s) return c::style_dim(s) end
-function style_italic(s) return c::style_italic(s) end
-function style_underline(s) return c::style_underline(s) end
-function style_inverse(s) return c::style_inverse(s) end
-function style_strikethrough(s) return c::style_strikethrough(s) end
+pub function style_bold(s) return c::style_bold(s) end
+pub function style_dim(s) return c::style_dim(s) end
+pub function style_italic(s) return c::style_italic(s) end
+pub function style_underline(s) return c::style_underline(s) end
+pub function style_inverse(s) return c::style_inverse(s) end
+pub function style_strikethrough(s) return c::style_strikethrough(s) end
 
 # Aliases
-function bold(s) return c::style_bold(s) end
-function dim(s) return c::style_dim(s) end
-function italic(s) return c::style_italic(s) end
-function underline(s) return c::style_underline(s) end
+pub function bold(s) return c::style_bold(s) end
+pub function dim(s) return c::style_dim(s) end
+pub function italic(s) return c::style_italic(s) end
+pub function underline(s) return c::style_underline(s) end
 
 # --- 24-bit TrueColor (RGB) & 256 Colors ---
-function color_rgb(s, r, g, b) return c::color_rgb(s, r, g, b) end
-function bg_rgb(s, r, g, b) return c::bg_rgb(s, r, g, b) end
-function color_256(s, code) return c::color_256(s, code) end
-function bg_256(s, code) return c::bg_256(s, code) end
-function ansi_reset() return c::ansi_reset() end
+pub function color_rgb(s, r, g, b) return c::color_rgb(s, r, g, b) end
+pub function bg_rgb(s, r, g, b) return c::bg_rgb(s, r, g, b) end
+pub function color_256(s, code) return c::color_256(s, code) end
+pub function bg_256(s, code) return c::bg_256(s, code) end
+pub function ansi_reset() return c::ansi_reset() end
 
 # --- Strip ANSI Sequences & Calculate True Visual Length ---
 # Strips all ANSI CSI escape sequences (\e[...m, \e[...H, etc.)
-function strip_ansi(text)
+pub function strip_ansi(text)
     return c::ansi_strip(text)
 end
 
 # Returns the visual terminal cell width of a UTF-8 string
 # Accounts for ASCII (width 1), CJK/wide characters (width 2), and 4-byte emojis (width 2)
-function utf8_len(s)
+pub function utf8_len(s)
     let s_str = str(s)
     let slen = len(s_str)
     if slen == 0
@@ -117,25 +118,25 @@ function utf8_len(s)
     return count
 end
 
-function visible_len(text)
+pub function visible_len(text)
     return utf8_len(strip_ansi(text))
 end
 
 # --- Badges and Tags ---
-function badge(text, color_name = "green")
+pub function badge(text, color_name = "green")
     when color_name
-        is "red" then return style_bold(color_red(text))
-        is "green" then return color_green(text)
-        is "yellow" then return color_yellow(text)
-        is "blue" then return color_blue(text)
-        is "cyan" then return color_cyan(text)
-        is "magenta" then return color_magenta(text)
-        is "gray" then return color_gray(text)
-        is "white" then return color_white(text)
+        is Color.Red, "red" then return style_bold(color_red(text))
+        is Color.Green, "green" then return color_green(text)
+        is Color.Yellow, "yellow" then return color_yellow(text)
+        is Color.Blue, "blue" then return color_blue(text)
+        is Color.Cyan, "cyan" then return color_cyan(text)
+        is Color.Magenta, "magenta" then return color_magenta(text)
+        is Color.Gray, "gray" then return color_gray(text)
+        is Color.White, "white" then return color_white(text)
         else return text
     end
 end
 
-function tag(label, value, color_name = "cyan")
+pub function tag(label, value, color_name = "cyan")
     return "[" + color_gray(label + ": ") + badge(value, color_name) + "]"
 end

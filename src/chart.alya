@@ -18,7 +18,7 @@ end
 
 # Generates a sparkline string from an array of numbers
 # Uses Unicode block elements:  ▂▃▄▅▆▇█
-function sparkline(values, min_val = null, max_val = null)
+pub function sparkline(values, min_val = null, max_val = null)
     let v_count = len(values)
     if v_count == 0
         return ""
@@ -29,7 +29,7 @@ function sparkline(values, min_val = null, max_val = null)
     let actual_min = 0
     let actual_max = 0
 
-    if min_val != null and max_val != null
+    if min_val is not null and max_val is not null
         actual_min = int(min_val)
         actual_max = int(max_val)
     else
@@ -81,7 +81,7 @@ end
 
 # Generates a horizontal percentage bar chart
 # Example: "CPU  [████████████░░░░░░░░] 60% (60/100)"
-function bar_chart(label, value, max_val, width = 20, fill_char = "█", empty_char = "░")
+pub function bar_chart(label, value, max_val, width = 20, fill_char = "█", empty_char = "░")
     if max_val <= 0
         max_val = 1
     end

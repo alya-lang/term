@@ -5,21 +5,21 @@ import "./cursor.alya"
 import "./style.alya"
 
 # Formats a string to overwrite the previous line in-place
-function live_frame(text)
+pub function live_frame(text)
     return cursor_up(1) + "\r" + clear_line() + str(text)
 end
 
 # Starts a live line by outputting the initial line
-function live_start(initial_text = "")
+pub function live_start(initial_text = "")
     say str(initial_text)
 end
 
 # Updates the live line in-place
-function live_update(text)
+pub function live_update(text)
     say live_frame(text)
 end
 
 # Finishes the live line with a final message
-function live_finish(final_text)
+pub function live_finish(final_text)
     say live_frame(final_text)
 end

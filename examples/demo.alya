@@ -2,6 +2,7 @@
 import "../src/lib.alya" as term
 
 function main()
+    say "DEMO START"
     say term::color_cyan("╔══════════════════════════════════════════════════════════════╗")
     say term::color_cyan("║") + "         " + term::style_bold(term::color_bright_yellow("Alya Terminal UI Toolkit (term)")) + "               " + term::color_cyan("║")
     say term::color_cyan("╚══════════════════════════════════════════════════════════════╝")
@@ -27,7 +28,7 @@ function main()
     say term::style_bold("3. Horizontal Rules & Key-Value Lists:")
     say term::hr("System Information", 50, "double")
     say term::kv("Operating System", "Windows 11 (x86_64)", 50, ".")
-    say term::kv("Alya Compiler", "alyac 0.0.16", 50, ".")
+    say term::kv("Alya Compiler", "alyac 0.0.18", 50, ".")
     say term::kv("Status", term::badge("HEALTHY", "green"), 50, ".")
     say term::hr("", 50, "double")
     say ""
@@ -47,7 +48,7 @@ function main()
         term::leaf("alya.toml"),
         term::leaf("README.md")
     ])
-    say term::tree(project_tree)
+    say project_tree.render()
     say ""
 
     # 5. Mini Visualizations (Sparklines & Bar Charts)
@@ -59,20 +60,20 @@ function main()
 
     # 6. Callout Boxes
     say term::style_bold("6. Callout Banners:")
-    say term::box_info("Alya Compiler v0.0.16 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
+    say term::box_info("Alya Compiler v0.0.18 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
     say ""
     say term::box_success("All 11 package test suites passed with 100% coverage.", "BUILD PASSED")
     say ""
 
     # 7. Dynamic Table (Unicode Rounded)
     say term::style_bold("7. Dynamic Table (Unicode Rounded with Badges):")
-    let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], "rounded")
-    term::table_set_alignments(t, [term::ALIGN_LEFT, term::ALIGN_LEFT, term::ALIGN_RIGHT, term::ALIGN_CENTER, term::ALIGN_RIGHT])
-    term::table_add_row(t, ["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
-    term::table_add_row(t, ["2", "Auth Service", "8081", term::badge("RUNNING", "green"), "8 ms"])
-    term::table_add_row(t, ["3", "Database Pool", "5432", term::badge("DEGRADED", "yellow"), "142 ms"])
-    term::table_add_row(t, ["4", "Redis Cache", "6379", term::badge("STOPPED", "red"), "0 ms"])
-    term::table_print(t)
+    let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], term::BorderStyle.Rounded)
+    t.set_alignments([term::Alignment.Left, term::Alignment.Left, term::Alignment.Right, term::Alignment.Center, term::Alignment.Right])
+    t.add_row(["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
+    t.add_row(["2", "Auth Service", "8081", term::badge("RUNNING", "green"), "8 ms"])
+    t.add_row(["3", "Database Pool", "5432", term::badge("DEGRADED", "yellow"), "142 ms"])
+    t.add_row(["4", "Redis Cache", "6379", term::badge("STOPPED", "red"), "0 ms"])
+    t.print()
     say ""
 
     # 8. Progress Bars & Spinners
