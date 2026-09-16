@@ -72,18 +72,6 @@ pub struct Table
     padding
 end
 
-pub struct TermTable
-    headers
-    rows
-    alignments
-    max_widths
-    border_chars
-    show_headers
-    show_borders
-    show_separator
-    padding
-end
-
 pub struct CalloutBox
     content
     title

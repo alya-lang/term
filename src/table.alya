@@ -449,16 +449,3 @@ end
 pub function Table.print(self)
     table_print(self)
 end
-
-# TermTable struct methods (alias compatibility)
-pub function TermTable.render(self)
-    return table_render(self)
-end
-
-pub function TermTable.add_row(self, row)
-    return table_add_row(self, row)
-end
-
-pub function TermTable.print(self)
-    table_print(self)
-end
