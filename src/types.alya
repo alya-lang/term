@@ -1,8 +1,6 @@
 # Terminal UI Toolkit - Type & Constant Definitions
 # Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 
-# --- Public Enumerations (Alya v0.0.18) ---
-
 pub enum BorderStyle
     Unicode = "unicode"
     Rounded = "rounded"
@@ -48,21 +46,6 @@ pub enum Style
     Strikethrough = 9
 end
 
-# --- Backward-compatible Constants ---
-pub const ALIGN_LEFT = Alignment.Left
-pub const ALIGN_CENTER = Alignment.Center
-pub const ALIGN_RIGHT = Alignment.Right
-
-pub const BORDER_UNICODE = BorderStyle.Unicode
-pub const BORDER_ROUNDED = BorderStyle.Rounded
-pub const BORDER_DOUBLE = BorderStyle.Double
-pub const BORDER_ASCII = BorderStyle.Ascii
-pub const BORDER_MARKDOWN = BorderStyle.Markdown
-pub const BORDER_COMPACT = BorderStyle.Compact
-pub const BORDER_NONE = BorderStyle.None
-
-# --- Struct Definitions ---
-
 pub struct BorderChars
     top_left
     top_mid
@@ -104,8 +87,8 @@ end
 pub struct CalloutBox
     content
     title
-    border_chars
-    color_prefix
+    box_border_chars
+    box_color_prefix
     padding_x
     min_width
 end

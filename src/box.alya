@@ -76,8 +76,8 @@ pub function box_render(cb)
         max_line_w = cb.min_width
     end
 
-    let b = cb.border_chars
-    let col = cb.color_prefix
+    let b = cb.box_border_chars
+    let col = cb.box_color_prefix
     let reset = ""
     if len(col) > 0
         reset = "\e[0m"

@@ -18,7 +18,7 @@ function main()
 
     # 3. Alignments
     let t_align = term::table(["Left", "Center", "Right"], [["L", "C", "R"]])
-    term::table_set_alignments(t_align, [term::ALIGN_LEFT, term::ALIGN_CENTER, term::ALIGN_RIGHT])
+    term::table_set_alignments(t_align, [term::Alignment.Left, term::Alignment.Center, term::Alignment.Right])
     let out_align = term::table_render(t_align)
     runner_assert(r, len(out_align) > 0, "aligned table renders successfully")
 
