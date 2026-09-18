@@ -25,7 +25,7 @@ function main()
     runner_assert_eq(r, style::visible_len(r_double_title), 30, "double titled rule has expected width")
 
     # 3. Key-Value Formatting
-    let line1 = rule::kv("Compiler", "alyac", 30, ".")
+    let line1 = rule::kv("Compiler", "alya", 30, ".")
     runner_assert_eq(r, style::visible_len(line1), 30, "kv line has exact specified width")
 
     let line2 = rule::kv("Status", style::color_green("ONLINE"), 25, "_")

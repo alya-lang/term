@@ -55,7 +55,7 @@ pub function rule(title = "", width = 60, style_name = "single")
 end
 
 # Formats a key-value pair aligned with leader characters (e.g. dots or spaces)
-# Example: "Compiler .......................... alyac 0.0.16"
+# Example: "Compiler .......................... alya 0.0.16"
 pub function kv(key, value, width = 40, leader = ".")
     if width <= 0
         width = 40

@@ -28,7 +28,7 @@ function main()
     say term::style_bold("3. Horizontal Rules & Key-Value Lists:")
     say term::hr("System Information", 50, "double")
     say term::kv("Operating System", "Windows 11 (x86_64)", 50, ".")
-    say term::kv("Alya Compiler", "alyac 0.0.18", 50, ".")
+    say term::kv("Alya Compiler", "alya 0.0.18", 50, ".")
     say term::kv("Status", term::badge("HEALTHY", "green"), 50, ".")
     say term::hr("", 50, "double")
     say ""

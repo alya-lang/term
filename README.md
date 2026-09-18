@@ -81,8 +81,8 @@ term = { git = "https://github.com/alya-lang/term", branch = "main" }
 Or install it directly using the Alya package CLI:
 
 ```bash
-alyac add term --git https://github.com/alya-lang/term --branch main
-alyac install
+alya add term --git https://github.com/alya-lang/term --branch main
+alya install
 ```
 
 ---
@@ -259,30 +259,30 @@ main()
 
 ## 🧪 Running Tests & Benchmarks
 
-Run the test suite using `alyac`:
+Run the test suite using `alya`:
 
 ```bash
-alyac test
+alya test
 ```
 
 Run individual test files:
 
 ```bash
-alyac run tests/test_basic.alya
-alyac run tests/test_table.alya
-alyac run tests/test_style.alya
+alya run tests/test_basic.alya
+alya run tests/test_table.alya
+alya run tests/test_style.alya
 ```
 
 Run the benchmark suite:
 
 ```bash
-alyac run benches/bench_basic.alya
+alya run benches/bench_basic.alya
 ```
 
 Run the example demo:
 
 ```bash
-alyac run examples/demo.alya
+alya run examples/demo.alya
 ```
 
 ---
@@ -294,13 +294,13 @@ Contributions are welcome! Please follow these steps:
 1. Fork the repository and clone it locally
 2. Install dependencies:
    ```bash
-   alyac install
+   alya install
    ```
 3. Create your feature branch (`git checkout -b feature/my-feature`)
 4. Verify tests and formatting before opening a PR:
    ```bash
-   alyac test
-   alyac fmt . --check
+   alya test
+   alya fmt . --check
    ```
 5. Commit your changes (`git commit -m "feat: add feature"`) and open a Pull Request
 
