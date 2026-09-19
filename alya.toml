@@ -1,6 +1,6 @@
 [package]
 name = "term"
-version = "0.4.0"
+version = "0.1.0"
 alya-version = "0.0.18"
 entry = "src/lib.alya"
 description = "Modern terminal UI toolkit: ANSI styling, tables, callouts, trees, progress bars, charts, prompts, and cursor controls"
@@ -11,8 +11,3 @@ repository = "https://github.com/alya-lang/term"
 keywords = ["alya", "alya-lang", "package", "term", "terminal", "table", "ansi", "tui", "prompt", "cli"]
 
 [dependencies]
-
-# [build]
-# c-sources = ["c/source.c"]
-# c-flags = ["-O2"]
-# c-include-dirs = ["c"]
