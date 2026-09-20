@@ -285,6 +285,18 @@ Run the example demo:
 alya run examples/demo.alya
 ```
 
+Check code formatting:
+
+```bash
+alya fmt . --check
+```
+
+Run static code linter:
+
+```bash
+alya lint . --check
+```
+
 ---
 
 ## 🤝 Contributing
