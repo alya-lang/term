@@ -11,3 +11,7 @@ repository = "https://github.com/alya-lang/term"
 keywords = ["alya", "alya-lang", "package", "term", "terminal", "table", "ansi", "tui", "prompt", "cli"]
 
 [dependencies]
+
+# [lint]
+# disabled_rules = []
+# exclude = []
