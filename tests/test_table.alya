@@ -1,4 +1,5 @@
-# Test suite for dynamic tables, borders, alignments, and sizing
+## Test suite for dynamic tables, borders, alignments, and sizing
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang)
 import "std/test"
 import "../src/lib.alya" as term
 

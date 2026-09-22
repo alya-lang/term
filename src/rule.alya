@@ -1,9 +1,12 @@
-# Terminal UI Toolkit - Horizontal Rules & Key-Value Lists
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/rule
+##
+## Terminal UI toolkit horizontal rules and key-value lists.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./style.alya"
 
-function _repeat(ch, count)
+# Repeats a glyph count times for rule construction.
+function _repeat(ch: string, count: int) -> string
     if count <= 0
         return ""
     end
@@ -16,9 +19,23 @@ function _repeat(ch, count)
     return res
 end
 
-# Formats a horizontal divider line with optional title
-# Styles: "single", "double", "dashed", "dotted", "thick", "wave"
-pub function rule(title = "", width = 60, style_name = "single")
+## Formats a horizontal divider line with an optional title.
+##
+## Styles: `"single"`, `"double"`, `"dashed"`, `"dotted"`, `"thick"`, `"wave"`.
+##
+## ### Parameters
+## - `title`: Optional centered title. Defaults to `""`.
+## - `width`: Total line width. Defaults to `60`.
+## - `style_name`: Rule style name. Defaults to `"single"`.
+##
+## ### Returns
+## The rendered divider string.
+##
+## ### Examples
+## ```alya
+## say rule("Section", 40)
+## ```
+pub function rule(title = "", width: int = 60, style_name: string = "single") -> string
     if width <= 0
         width = 60
     end
@@ -44,19 +61,31 @@ pub function rule(title = "", width = 60, style_name = "single")
     let prefix_len = 3
     if width < prefix_len + t_vis + 4
         # Narrow width fallback
-        return _repeat(ch, 2) + " " + title_str + " " + _repeat(ch, 2)
+        let edge = _repeat(ch, 2)
+        return "{edge} {title_str} {edge}"
     end
 
     let prefix = _repeat(ch, prefix_len) + " "
     let suffix_len = width - (prefix_len + 1 + t_vis + 1)
     let suffix = " " + _repeat(ch, suffix_len)
+    let bold_title = style_bold(title_str)
 
-    return prefix + style_bold(title_str) + suffix
+    return "{prefix}{bold_title}{suffix}"
 end
 
-# Formats a key-value pair aligned with leader characters (e.g. dots or spaces)
-# Example: "Compiler .......................... alya 0.0.16"
-pub function kv(key, value, width = 40, leader = ".")
+## Formats a key-value pair aligned with leader characters.
+##
+## Example: `"Compiler .......................... alya 0.0.16"`.
+##
+## ### Parameters
+## - `key`: Key label value.
+## - `value`: Associated value.
+## - `width`: Total line width. Defaults to `40`.
+## - `leader`: Fill glyph. Defaults to `"."`.
+##
+## ### Returns
+## The aligned pair string.
+pub function kv(key, value, width: int = 40, leader: string = ".") -> string
     if width <= 0
         width = 40
     end
@@ -66,17 +95,25 @@ pub function kv(key, value, width = 40, leader = ".")
     let v_vis = visible_len(v_str)
 
     if k_vis + v_vis + 2 >= width
-        return k_str + " " + v_str
+        return "{k_str} {v_str}"
     end
 
     let fill_count = width - (k_vis + v_vis + 2)
-    let fill = _repeat(leader, fill_count)
+    let fill = color_gray(_repeat(leader, fill_count))
 
-    return k_str + " " + color_gray(fill) + " " + v_str
+    return "{k_str} {fill} {v_str}"
 end
 
-# Formats an array of [key, value] pairs into an aligned key-value block
-pub function kv_list(pairs, width = 40, leader = ".")
+## Formats an array of `[key, value]` pairs into an aligned block.
+##
+## ### Parameters
+## - `pairs`: Array of two-element pair arrays.
+## - `width`: Total line width. Defaults to `40`.
+## - `leader`: Fill glyph. Defaults to `"."`.
+##
+## ### Returns
+## The newline-joined block string.
+pub function kv_list(pairs: array, width: int = 40, leader: string = ".") -> string
     let count = len(pairs)
     if count == 0
         return ""
@@ -89,7 +126,7 @@ pub function kv_list(pairs, width = 40, leader = ".")
         if i == 0
             res = line
         else
-            res += "\n" + line
+            res += "\n{line}"
         end
         i += 1
     end

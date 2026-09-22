@@ -1,62 +1,141 @@
-# Terminal UI Toolkit - Status Badges, Loggers & Icons
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/status
+##
+## Terminal UI toolkit status badges, loggers, and icons.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./style.alya"
 
-# --- Unicode Icons ---
-pub function icon_success() return "✔" end
-pub function icon_warn()    return "⚠" end
-pub function icon_error()   return "✖" end
-pub function icon_info()    return "ℹ" end
-pub function icon_step()    return "➔" end
-pub function icon_dot()     return "•" end
+# ───────────────────────────────────────────────────────────────
+# Unicode Icons
+# ───────────────────────────────────────────────────────────────
 
-# --- Status String Formatters ---
+## Returns the success check icon (`✔`).
+pub function icon_success() -> string return "✔" end
+## Returns the warning icon (`⚠`).
+pub function icon_warn() -> string return "⚠" end
+## Returns the error icon (`✖`).
+pub function icon_error() -> string return "✖" end
+## Returns the info icon (`ℹ`).
+pub function icon_info() -> string return "ℹ" end
+## Returns the step arrow icon (`➔`).
+pub function icon_step() -> string return "➔" end
+## Returns the bullet dot icon (`•`).
+pub function icon_dot() -> string return "•" end
 
-# Returns formatted success message: "✔ [SUCCESS] <msg>"
-pub function format_success(msg)
-    return color_bright_green(icon_success()) + " " + style_bold(color_bright_green("[SUCCESS]")) + " " + str(msg)
+# ───────────────────────────────────────────────────────────────
+# Status String Formatters
+# ───────────────────────────────────────────────────────────────
+
+## Formats a success message (`✔ [SUCCESS] <msg>`).
+##
+## ### Parameters
+## - `msg`: Message value.
+##
+## ### Returns
+## The formatted status string.
+pub function format_success(msg) -> string
+    let mark = color_bright_green(icon_success())
+    let tag = style_bold(color_bright_green("[SUCCESS]"))
+    return "{mark} {tag} {msg}"
 end
 
-# Returns formatted warning message: "⚠ [WARNING] <msg>"
-pub function format_warn(msg)
-    return color_bright_yellow(icon_warn()) + " " + style_bold(color_bright_yellow("[WARNING]")) + " " + str(msg)
+## Formats a warning message (`⚠ [WARNING] <msg>`).
+##
+## ### Parameters
+## - `msg`: Message value.
+##
+## ### Returns
+## The formatted status string.
+pub function format_warn(msg) -> string
+    let mark = color_bright_yellow(icon_warn())
+    let tag = style_bold(color_bright_yellow("[WARNING]"))
+    return "{mark} {tag} {msg}"
 end
 
-# Returns formatted error message: "✖ [ERROR]   <msg>"
-pub function format_error(msg)
-    return color_bright_red(icon_error()) + " " + style_bold(color_bright_red("[ERROR]  ")) + " " + str(msg)
+## Formats an error message (`✖ [ERROR]   <msg>`).
+##
+## ### Parameters
+## - `msg`: Message value.
+##
+## ### Returns
+## The formatted status string.
+pub function format_error(msg) -> string
+    let mark = color_bright_red(icon_error())
+    let tag = style_bold(color_bright_red("[ERROR]  "))
+    return "{mark} {tag} {msg}"
 end
 
-# Returns formatted info message: "ℹ [INFO]    <msg>"
-pub function format_info(msg)
-    return color_bright_cyan(icon_info()) + " " + style_bold(color_bright_cyan("[INFO]   ")) + " " + str(msg)
+## Formats an info message (`ℹ [INFO]    <msg>`).
+##
+## ### Parameters
+## - `msg`: Message value.
+##
+## ### Returns
+## The formatted status string.
+pub function format_info(msg) -> string
+    let mark = color_bright_cyan(icon_info())
+    let tag = style_bold(color_bright_cyan("[INFO]   "))
+    return "{mark} {tag} {msg}"
 end
 
-# Returns formatted step progress message: "➔ [1/3] <msg>"
-pub function format_step(current, total, msg)
-    let step_str = "[" + str(current) + "/" + str(total) + "]"
-    return color_bright_magenta(icon_step()) + " " + style_bold(step_str) + " " + str(msg)
+## Formats a step progress message (`➔ [1/3] <msg>`).
+##
+## ### Parameters
+## - `current`: Current step integer.
+## - `total`: Total step integer.
+## - `msg`: Message value.
+##
+## ### Returns
+## The formatted status string.
+pub function format_step(current: int, total: int, msg) -> string
+    let step_str = "[{current}/{total}]"
+    let mark = color_bright_magenta(icon_step())
+    let tag = style_bold(step_str)
+    return "{mark} {tag} {msg}"
 end
 
-# --- Direct Terminal Loggers ---
+# ───────────────────────────────────────────────────────────────
+# Direct Terminal Loggers
+# ───────────────────────────────────────────────────────────────
 
+## Prints a formatted success message.
+##
+## ### Parameters
+## - `msg`: Message value.
 pub function log_success(msg)
     say format_success(msg)
 end
 
+## Prints a formatted warning message.
+##
+## ### Parameters
+## - `msg`: Message value.
 pub function log_warn(msg)
     say format_warn(msg)
 end
 
+## Prints a formatted error message.
+##
+## ### Parameters
+## - `msg`: Message value.
 pub function log_error(msg)
     say format_error(msg)
 end
 
+## Prints a formatted info message.
+##
+## ### Parameters
+## - `msg`: Message value.
 pub function log_info(msg)
     say format_info(msg)
 end
 
-pub function log_step(current, total, msg)
+## Prints a formatted step progress message.
+##
+## ### Parameters
+## - `current`: Current step integer.
+## - `total`: Total step integer.
+## - `msg`: Message value.
+pub function log_step(current: int, total: int, msg)
     say format_step(current, total, msg)
 end

@@ -1,25 +1,44 @@
-# Terminal UI Toolkit - In-Place Live Terminal Updates
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/live
+##
+## Terminal UI toolkit in-place live terminal updates.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./cursor.alya"
 import "./style.alya"
 
-# Formats a string to overwrite the previous line in-place
-pub function live_frame(text)
-    return cursor_up(1) + "\r" + clear_line() + str(text)
+## Formats a string overwriting the previous line in-place.
+##
+## ### Parameters
+## - `text`: Replacement line content.
+##
+## ### Returns
+## The ANSI rewrite sequence for the line.
+pub function live_frame(text: string) -> string
+    let up = cursor_up(1)
+    let cleared = clear_line()
+    return "{up}\r{cleared}{text}"
 end
 
-# Starts a live line by outputting the initial line
-pub function live_start(initial_text = "")
+## Starts a live line by outputting the initial line.
+##
+## ### Parameters
+## - `initial_text`: Initial line content. Defaults to `""`.
+pub function live_start(initial_text: string = "")
     say str(initial_text)
 end
 
-# Updates the live line in-place
-pub function live_update(text)
+## Updates the live line in-place.
+##
+## ### Parameters
+## - `text`: Replacement line content.
+pub function live_update(text: string)
     say live_frame(text)
 end
 
-# Finishes the live line with a final message
-pub function live_finish(final_text)
+## Finishes the live line with a final message.
+##
+## ### Parameters
+## - `final_text`: Final line content.
+pub function live_finish(final_text: string)
     say live_frame(final_text)
 end

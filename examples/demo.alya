@@ -1,19 +1,39 @@
-# Comprehensive Demo of the term Package
+## Demo of the term package
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+
 import "../src/lib.alya" as term
 
 function main()
     say "DEMO START"
     say term::color_cyan("╔══════════════════════════════════════════════════════════════╗")
-    say term::color_cyan("║") + "         " + term::style_bold(term::color_bright_yellow("Alya Terminal UI Toolkit (term)")) + "               " + term::color_cyan("║")
+    let banner_edge = term::color_cyan("║")
+    let banner_title = term::style_bold(term::color_bright_yellow("Alya Terminal UI Toolkit (term)"))
+    say "{banner_edge}         {banner_title}               {banner_edge}"
     say term::color_cyan("╚══════════════════════════════════════════════════════════════╝")
     say ""
 
     # 1. Colors, Styles, and Badges
     say term::style_bold("1. ANSI Styling & Badges:")
-    say "  Colors: " + term::color_red("Red") + " " + term::color_green("Green") + " " + term::color_yellow("Yellow") + " " + term::color_blue("Blue") + " " + term::color_magenta("Magenta") + " " + term::color_cyan("Cyan")
-    say "  Styles: " + term::style_bold("Bold") + ", " + term::style_dim("Dim") + ", " + term::style_italic("Italic") + ", " + term::style_underline("Underline")
-    say "  Badges: " + term::badge("ACTIVE", "green") + " " + term::badge("PENDING", "yellow") + " " + term::badge("FAILED", "red") + " " + term::badge("INFO", "cyan")
-    say "  Tags:   " + term::tag("ENV", "production", "green") + " " + term::tag("PORT", "8080", "cyan")
+    let c_red = term::color_red("Red")
+    let c_green = term::color_green("Green")
+    let c_yellow = term::color_yellow("Yellow")
+    let c_blue = term::color_blue("Blue")
+    let c_magenta = term::color_magenta("Magenta")
+    let c_cyan = term::color_cyan("Cyan")
+    say "  Colors: {c_red} {c_green} {c_yellow} {c_blue} {c_magenta} {c_cyan}"
+    let s_bold = term::style_bold("Bold")
+    let s_dim = term::style_dim("Dim")
+    let s_italic = term::style_italic("Italic")
+    let s_underline = term::style_underline("Underline")
+    say "  Styles: {s_bold}, {s_dim}, {s_italic}, {s_underline}"
+    let b_active = term::badge("ACTIVE", "green")
+    let b_pending = term::badge("PENDING", "yellow")
+    let b_failed = term::badge("FAILED", "red")
+    let b_info = term::badge("INFO", "cyan")
+    say "  Badges: {b_active} {b_pending} {b_failed} {b_info}"
+    let t_env = term::tag("ENV", "production", "green")
+    let t_port = term::tag("PORT", "8080", "cyan")
+    say "  Tags:   {t_env} {t_port}"
     say ""
 
     # 2. Status Loggers & Icons
@@ -53,9 +73,12 @@ function main()
 
     # 5. Mini Visualizations (Sparklines & Bar Charts)
     say term::style_bold("5. Mini Visualizations:")
-    say "  CPU Load Trend (last 10m):  " + term::color_bright_cyan(term::spark([5, 12, 25, 45, 80, 95, 65, 40, 20, 10]))
-    say "  Memory Usage: " + term::bar("RAM", 72, 100, 20)
-    say "  Disk Space:   " + term::bar("SSD", 35, 100, 20)
+    let cpu_spark = term::color_bright_cyan(term::spark([5, 12, 25, 45, 80, 95, 65, 40, 20, 10]))
+    say "  CPU Load Trend (last 10m):  {cpu_spark}"
+    let mem_bar = term::bar("RAM", 72, 100, 20)
+    say "  Memory Usage: {mem_bar}"
+    let disk_bar = term::bar("SSD", 35, 100, 20)
+    say "  Disk Space:   {disk_bar}"
     say ""
 
     # 6. Callout Boxes
@@ -78,9 +101,16 @@ function main()
 
     # 8. Progress Bars & Spinners
     say term::style_bold("8. Progress Indicators:")
-    say "  Downloading assets: " + term::progress(75, 100, 25)
-    say "  Compiling binaries: " + term::progress(100, 100, 25)
-    say "  Spinner frames:     " + term::spinner(0) + " " + term::spinner(1) + " " + term::spinner(2) + " " + term::spinner(3) + " " + term::spinner(4)
+    let dl_bar = term::progress(75, 100, 25)
+    say "  Downloading assets: {dl_bar}"
+    let cc_bar = term::progress(100, 100, 25)
+    say "  Compiling binaries: {cc_bar}"
+    let sp0 = term::spinner(0)
+    let sp1 = term::spinner(1)
+    let sp2 = term::spinner(2)
+    let sp3 = term::spinner(3)
+    let sp4 = term::spinner(4)
+    say "  Spinner frames:     {sp0} {sp1} {sp2} {sp3} {sp4}"
     say ""
 
     say term::color_green("✓ Demo executed successfully!")

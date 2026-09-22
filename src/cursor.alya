@@ -1,91 +1,166 @@
-# Terminal UI Toolkit - Cursor & Screen Control
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/cursor
+##
+## Terminal UI toolkit cursor and screen control.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
-# --- Cursor Movement ---
+# ───────────────────────────────────────────────────────────────
+# Cursor Movement
+# ───────────────────────────────────────────────────────────────
 
-# Move cursor to absolute row and column (1-indexed)
-pub function cursor_to(row, col)
-    return "\e[" + str(row) + ";" + str(col) + "H"
+## Moves the cursor to an absolute 1-indexed row and column.
+##
+## ### Parameters
+## - `row`: Target row integer.
+## - `col`: Target column integer.
+##
+## ### Returns
+## The ANSI positioning sequence.
+pub function cursor_to(row: int, col: int) -> string
+    return "\e[{row};{col}H"
 end
 
-# Move cursor up by n lines
-pub function cursor_up(n = 1)
+## Moves the cursor up by `n` lines.
+##
+## ### Parameters
+## - `n`: Line count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_up(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[" + str(n) + "A"
+    return "\e[{n}A"
 end
 
-# Move cursor down by n lines
-pub function cursor_down(n = 1)
+## Moves the cursor down by `n` lines.
+##
+## ### Parameters
+## - `n`: Line count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_down(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[" + str(n) + "B"
+    return "\e[{n}B"
 end
 
-# Move cursor forward/right by n columns
-pub function cursor_forward(n = 1)
+## Moves the cursor forward (right) by `n` columns.
+##
+## ### Parameters
+## - `n`: Column count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_forward(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[" + str(n) + "C"
+    return "\e[{n}C"
 end
 
-pub function cursor_right(n = 1)
+## Alias for `cursor_forward`.
+##
+## ### Parameters
+## - `n`: Column count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_right(n: int = 1) -> string
     return cursor_forward(n)
 end
 
-# Move cursor back/left by n columns
-pub function cursor_back(n = 1)
+## Moves the cursor back (left) by `n` columns.
+##
+## ### Parameters
+## - `n`: Column count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_back(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[" + str(n) + "D"
+    return "\e[{n}D"
 end
 
-pub function cursor_left(n = 1)
+## Alias for `cursor_back`.
+##
+## ### Parameters
+## - `n`: Column count. Defaults to `1`.
+##
+## ### Returns
+## The ANSI sequence (empty when `n` is not positive).
+pub function cursor_left(n: int = 1) -> string
     return cursor_back(n)
 end
 
-# Save current cursor position
-pub function cursor_save()
+## Saves the current cursor position.
+##
+## ### Returns
+## The ANSI save sequence.
+pub function cursor_save() -> string
     return "\e[s"
 end
 
-# Restore saved cursor position
-pub function cursor_restore()
+## Restores the saved cursor position.
+##
+## ### Returns
+## The ANSI restore sequence.
+pub function cursor_restore() -> string
     return "\e[u"
 end
 
-# Hide cursor
-pub function cursor_hide()
+## Hides the cursor.
+##
+## ### Returns
+## The ANSI hide sequence.
+pub function cursor_hide() -> string
     return "\e[?25l"
 end
 
-# Show cursor
-pub function cursor_show()
+## Shows the cursor.
+##
+## ### Returns
+## The ANSI show sequence.
+pub function cursor_show() -> string
     return "\e[?25h"
 end
 
-# --- Screen & Line Clearing ---
+# ───────────────────────────────────────────────────────────────
+# Screen & Line Clearing
+# ───────────────────────────────────────────────────────────────
 
-# Clear entire terminal screen and reset cursor to home (1, 1)
-pub function clear_screen()
+## Clears the terminal screen and resets the cursor to home (`1, 1`).
+##
+## ### Returns
+## The ANSI clear-screen sequence.
+pub function clear_screen() -> string
     return "\e[2J\e[H"
 end
 
-# Clear current line entirely and return carriage to column 0
-pub function clear_line()
+## Clears the current line entirely, returning to column 0.
+##
+## ### Returns
+## The ANSI clear-line sequence.
+pub function clear_line() -> string
     return "\e[2K\r"
 end
 
-# Clear from cursor to end of current line
-pub function clear_to_end()
+## Clears from the cursor to the end of the current line.
+##
+## ### Returns
+## The ANSI clear-to-end sequence.
+pub function clear_to_end() -> string
     return "\e[K"
 end
 
-# Clear from cursor to beginning of current line
-pub function clear_to_start()
+## Clears from the cursor to the beginning of the current line.
+##
+## ### Returns
+## The ANSI clear-to-start sequence.
+pub function clear_to_start() -> string
     return "\e[1K"
 end

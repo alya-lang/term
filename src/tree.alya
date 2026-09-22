@@ -1,19 +1,37 @@
-# Terminal UI Toolkit - Tree Hierarchy Formatting
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/tree
+##
+## Terminal UI toolkit tree hierarchy formatting.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./types.alya"
 import "./style.alya"
 
-pub function tree_node(label, children = [])
-    return TreeNode(str(label), children)
+## Creates a tree node with child nodes.
+##
+## ### Parameters
+## - `label`: Node label value.
+## - `children`: Child `TreeNode` array. Defaults to `[]`.
+##
+## ### Returns
+## The new `TreeNode` instance.
+pub function tree_node(label, children: array = []) -> TreeNode
+    return TreeNode { label: str(label), children: children }
 end
 
-pub function tree_leaf(label)
+## Creates a childless tree leaf node.
+##
+## ### Parameters
+## - `label`: Node label value.
+##
+## ### Returns
+## The new `TreeNode` instance.
+pub function tree_leaf(label) -> TreeNode
     let empty_children = []
-    return TreeNode(str(label), empty_children)
+    return TreeNode { label: str(label), children: empty_children }
 end
 
-function _tree_walk(node, prefix, is_last, is_root, out_lines)
+# Depth-first walker collecting connector-prefixed lines.
+function _tree_walk(node: TreeNode, prefix: string, is_last: int, is_root: int, out_lines: array)
     let label = str(node.label)
     let children = node.children
 
@@ -28,7 +46,7 @@ function _tree_walk(node, prefix, is_last, is_root, out_lines)
         else
             next_prefix += "│   "
         end
-        out_lines.push(prefix + connector + label)
+        out_lines.push("{prefix}{connector}{label}")
     end
 
     let c_len = len(children)
@@ -44,7 +62,14 @@ function _tree_walk(node, prefix, is_last, is_root, out_lines)
     end
 end
 
-pub function tree_render(root)
+## Renders a tree into connector-prefixed lines.
+##
+## ### Parameters
+## - `root`: Root `TreeNode` instance.
+##
+## ### Returns
+## The rendered tree string.
+pub function tree_render(root: TreeNode) -> string
     let lines = []
     _tree_walk(root, "", 1, 1, lines)
     let res = ""
@@ -54,24 +79,48 @@ pub function tree_render(root)
         if i == 0
             res = lines[i]
         else
-            res += "\n" + lines[i]
+            res += "\n{lines[i]}"
         end
         i += 1
     end
     return res
 end
 
-pub function tree(root)
+## Alias for `tree_render`.
+##
+## ### Parameters
+## - `root`: Root `TreeNode` instance.
+##
+## ### Returns
+## The rendered tree string.
+pub function tree(root: TreeNode) -> string
     return tree_render(root)
 end
 
-# --- Struct Methods (Alya v0.0.18) ---
+# ───────────────────────────────────────────────────────────────
+# TreeNode Struct Methods
+# ───────────────────────────────────────────────────────────────
 
-pub function TreeNode.render(self)
+## Renders this node into connector-prefixed lines.
+##
+## ### Parameters
+## - `self`: The target `TreeNode` instance.
+##
+## ### Returns
+## The rendered tree string.
+pub function TreeNode.render(self: TreeNode) -> string
     return tree_render(self)
 end
 
-pub function TreeNode.add_child(self, child)
+## Appends a child node, returning the updated parent.
+##
+## ### Parameters
+## - `self`: The target `TreeNode` instance.
+## - `child`: Child `TreeNode` to append.
+##
+## ### Returns
+## The updated `TreeNode` instance.
+pub function TreeNode.add_child(self: TreeNode, child: TreeNode) -> TreeNode
     self.children.push(child)
     return self
 end

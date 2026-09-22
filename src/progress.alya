@@ -1,20 +1,37 @@
-# Terminal UI Toolkit - Progress Bar & Spinner Indicators
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/progress
+##
+## Terminal UI toolkit progress bar and spinner indicators.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./types.alya"
 import "./style.alya"
 
-pub function progress_bar_new(total, width = 30, filled_char = "=", empty_char = " ", head_char = ">", color_prefix = "")
+## Creates a `ProgressBar` model with range and glyph configuration.
+##
+## Non-positive totals and widths fall back to `1` and `20`.
+##
+## ### Parameters
+## - `total`: Completion target value.
+## - `width`: Bar width in cells. Defaults to `30`.
+## - `filled_char`: Glyph for completed cells. Defaults to `"="`.
+## - `empty_char`: Glyph for remaining cells. Defaults to `" "`.
+## - `head_char`: Leading-edge glyph. Defaults to `">"`.
+## - `color_prefix`: ANSI color prefix. Defaults to `""`.
+##
+## ### Returns
+## The new `ProgressBar` instance.
+pub function progress_bar_new(total: int, width: int = 30, filled_char: string = "=", empty_char: string = " ", head_char: string = ">", color_prefix: string = "") -> ProgressBar
     if total <= 0
         total = 1
     end
     if width <= 0
         width = 20
     end
-    return ProgressBar(0, total, width, filled_char, empty_char, head_char, color_prefix, 1, 1)
+    return ProgressBar { current: 0, total: total, width: width, filled_char: filled_char, empty_char: empty_char, head_char: head_char, color_prefix: color_prefix, show_percent: 1, show_counts: 1 }
 end
 
-function _prog_repeat(ch, count)
+# Repeats a glyph count times for bar construction.
+function _prog_repeat(ch: string, count: int) -> string
     if count <= 0
         return ""
     end
@@ -27,8 +44,15 @@ function _prog_repeat(ch, count)
     return res
 end
 
-# Formats a progress bar string: "[===========>          ] 55% (55/100)"
-pub function progress_bar_render(pb, current)
+## Renders a progress bar string (`[===========>          ] 55% (55/100)`).
+##
+## ### Parameters
+## - `pb`: Target `ProgressBar` instance (current value is mutated).
+## - `current`: Current progress value.
+##
+## ### Returns
+## The rendered bar string.
+pub function progress_bar_render(pb: ProgressBar, current: int) -> string
     pb.current = current
     let tot = pb.total
     if tot <= 0
@@ -74,31 +98,50 @@ pub function progress_bar_render(pb, current)
         reset = "\e[0m"
     end
 
-    let bar = "[" + col + _prog_repeat(pb.filled_char, actual_filled)
+    let filled_part = _prog_repeat(pb.filled_char, actual_filled)
+    let empty_part = _prog_repeat(pb.empty_char, empty_count)
+    let bar = "[{col}{filled_part}"
     if head_count > 0
         bar += pb.head_char
     end
-    bar += reset + _prog_repeat(pb.empty_char, empty_count) + "]"
+    bar += "{reset}{empty_part}]"
 
     if pb.show_percent
-        bar += " " + str(percent) + "%"
+        bar += " {percent}%"
     end
 
     if pb.show_counts
-        bar += " (" + str(cur) + "/" + str(tot) + ")"
+        bar += " ({cur}/{tot})"
     end
 
     return bar
 end
 
-# Quick helper without struct instantiation
-pub function progress_bar(current, total, width = 30)
+## Renders a progress bar without struct instantiation.
+##
+## ### Parameters
+## - `current`: Current progress value.
+## - `total`: Completion target value.
+## - `width`: Bar width in cells. Defaults to `30`.
+##
+## ### Returns
+## The rendered bar string.
+pub function progress_bar(current: int, total: int, width: int = 30) -> string
     let pb = progress_bar_new(total, width)
     return progress_bar_render(pb, current)
 end
 
-# Returns an animated spinner glyph for a given step and style
-pub function spinner_char(step, style_name = "dots")
+## Returns an animated spinner glyph for a step and style.
+##
+## Styles: `"line"`, `"pulse"`, `"arrows"`, `"blocks"`, `"dots"` (default).
+##
+## ### Parameters
+## - `step`: Animation step integer.
+## - `style_name`: Spinner style name. Defaults to `"dots"`.
+##
+## ### Returns
+## The spinner glyph string.
+pub function spinner_char(step: int, style_name: string = "dots") -> string
     when style_name
         is "line" then
             let frames = ["|", "/", "-", "\\"]
@@ -118,8 +161,18 @@ pub function spinner_char(step, style_name = "dots")
     end
 end
 
-# --- Struct Methods (Alya v0.0.18) ---
+# ───────────────────────────────────────────────────────────────
+# ProgressBar Struct Methods
+# ───────────────────────────────────────────────────────────────
 
-pub function ProgressBar.render(self, current)
+## Renders this progress bar at the given value.
+##
+## ### Parameters
+## - `self`: The target `ProgressBar` instance.
+## - `current`: Current progress value.
+##
+## ### Returns
+## The rendered bar string.
+pub function ProgressBar.render(self: ProgressBar, current: int) -> string
     return progress_bar_render(self, current)
 end

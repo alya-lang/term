@@ -1,6 +1,12 @@
-# Terminal UI Toolkit - Type & Constant Definitions
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/types
+##
+## Terminal UI toolkit type and constant definitions.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
+##
+## Defines border styles, alignment, ANSI colors, text styles, and the
+## table, box, progress, and tree data models.
 
+## Border style presets for tables and boxes.
 pub enum BorderStyle
     Unicode = "unicode"
     Rounded = "rounded"
@@ -11,12 +17,14 @@ pub enum BorderStyle
     None = "none"
 end
 
+## Horizontal cell content alignment.
 pub enum Alignment
     Left = 0
     Center = 1
     Right = 2
 end
 
+## ANSI foreground color codes.
 pub enum Color
     Black = 30
     Red = 31
@@ -37,6 +45,7 @@ pub enum Color
     BrightWhite = 97
 end
 
+## ANSI text style (SGR) codes.
 pub enum Style
     Bold = 1
     Dim = 2
@@ -46,54 +55,106 @@ pub enum Style
     Strikethrough = 9
 end
 
+## Box-drawing glyph set for one border preset.
+##
+## ### Fields
+## - `top_left`: Top-left corner glyph.
+## - `top_mid`: Top edge junction glyph.
+## - `top_right`: Top-right corner glyph.
+## - `bottom_left`: Bottom-left corner glyph.
+## - `bottom_mid`: Bottom edge junction glyph.
+## - `bottom_right`: Bottom-right corner glyph.
+## - `mid_left`: Middle-left junction glyph.
+## - `mid_mid`: Middle junction glyph.
+## - `mid_right`: Middle-right junction glyph.
+## - `horiz`: Horizontal edge glyph.
+## - `vert`: Vertical edge glyph.
 pub struct BorderChars
-    top_left
-    top_mid
-    top_right
-    bottom_left
-    bottom_mid
-    bottom_right
-    mid_left
-    mid_mid
-    mid_right
-    horiz
-    vert
+    top_left: string
+    top_mid: string
+    top_right: string
+    bottom_left: string
+    bottom_mid: string
+    bottom_right: string
+    mid_left: string
+    mid_mid: string
+    mid_right: string
+    horiz: string
+    vert: string
 end
 
+## Table builder model holding headers, rows, and rendering options.
+##
+## ### Fields
+## - `headers`: Header cell array.
+## - `rows`: Data row array (each an array of cells).
+## - `alignments`: Per-column `Alignment` values.
+## - `max_widths`: Per-column width caps (`0` for uncapped).
+## - `border_chars`: Active `BorderChars` preset.
+## - `show_headers`: `1` renders the header row, `0` hides it.
+## - `show_borders`: `1` renders outer borders, `0` hides them.
+## - `show_separator`: `1` renders the header separator, `0` hides it.
+## - `padding`: Horizontal cell padding spaces.
 pub struct Table
-    headers
-    rows
-    alignments
-    max_widths
-    border_chars
-    show_headers
-    show_borders
-    show_separator
-    padding
+    headers: array
+    rows: array
+    alignments: array
+    max_widths: array
+    border_chars: BorderChars
+    show_headers: int
+    show_borders: int
+    show_separator: int
+    padding: int
 end
 
+## Callout box model holding content and presentation options.
+##
+## ### Fields
+## - `content`: Box body text (multiline supported).
+## - `title`: Optional embedded title string.
+## - `box_border_chars`: Active `BorderChars` preset.
+## - `box_color_prefix`: ANSI color prefix string (or `""`).
+## - `padding_x`: Horizontal content padding spaces.
+## - `min_width`: Minimum content width.
 pub struct CalloutBox
-    content
-    title
-    box_border_chars
-    box_color_prefix
-    padding_x
-    min_width
+    content,
+    title: string,
+    box_border_chars: BorderChars,
+    box_color_prefix: string,
+    padding_x: int,
+    min_width: int
 end
 
+## Progress bar model holding range and glyph configuration.
+##
+## ### Fields
+## - `current`: Current progress value (mutated on render).
+## - `total`: Completion target value.
+## - `width`: Bar width in cells.
+## - `filled_char`: Glyph for completed cells.
+## - `empty_char`: Glyph for remaining cells.
+## - `head_char`: Leading-edge glyph (or `""`).
+## - `color_prefix`: ANSI color prefix string (or `""`).
+## - `show_percent`: `1` appends the percentage, `0` hides it.
+## - `show_counts`: `1` appends `(current/total)`, `0` hides it.
 pub struct ProgressBar
-    current
-    total
-    width
-    filled_char
-    empty_char
-    head_char
-    color_prefix
-    show_percent
-    show_counts
+    current: int
+    total: int
+    width: int
+    filled_char: string
+    empty_char: string
+    head_char: string
+    color_prefix: string
+    show_percent: int
+    show_counts: int
 end
 
+## Tree hierarchy node model.
+##
+## ### Fields
+## - `label`: Node label string.
+## - `children`: Child `TreeNode` array.
 pub struct TreeNode
-    label
-    children
+    label: string
+    children: array
 end

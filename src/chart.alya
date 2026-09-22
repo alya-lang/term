@@ -1,9 +1,12 @@
-# Terminal UI Toolkit - Mini Data Visualizations (Sparklines & Bar Charts)
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/chart
+##
+## Terminal UI toolkit mini data visualizations (sparklines and bar charts).
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./style.alya"
 
-function _chart_repeat(ch, count)
+# Repeats a glyph count times for bar construction.
+function _chart_repeat(ch: string, count: int) -> string
     if count <= 0
         return ""
     end
@@ -16,9 +19,23 @@ function _chart_repeat(ch, count)
     return res
 end
 
-# Generates a sparkline string from an array of numbers
-# Uses Unicode block elements:  ▂▃▄▅▆▇█
-pub function sparkline(values, min_val = null, max_val = null)
+## Generates a sparkline string from an array of numbers.
+##
+## Uses Unicode block elements (` ▂▃▄▅▆▇█`) scaled to the value range.
+##
+## ### Parameters
+## - `values`: Numeric value array.
+## - `min_val`: Explicit range floor (auto-detected when null).
+## - `max_val`: Explicit range ceiling (auto-detected when null).
+##
+## ### Returns
+## The sparkline string.
+##
+## ### Examples
+## ```alya
+## say sparkline([1, 5, 3, 8, 2])
+## ```
+pub function sparkline(values: array, min_val = null, max_val = null) -> string
     let v_count = len(values)
     if v_count == 0
         return ""
@@ -79,9 +96,21 @@ pub function sparkline(values, min_val = null, max_val = null)
     return res
 end
 
-# Generates a horizontal percentage bar chart
-# Example: "CPU  [████████████░░░░░░░░] 60% (60/100)"
-pub function bar_chart(label, value, max_val, width = 20, fill_char = "█", empty_char = "░")
+## Generates a horizontal percentage bar chart.
+##
+## Example: `"CPU  [████████████░░░░░░░░] 60% (60/100)"`.
+##
+## ### Parameters
+## - `label`: Chart label value.
+## - `value`: Current value integer.
+## - `max_val`: Range ceiling integer.
+## - `width`: Bar width in cells. Defaults to `20`.
+## - `fill_char`: Glyph for filled cells. Defaults to `"█"`.
+## - `empty_char`: Glyph for remaining cells. Defaults to `"░"`.
+##
+## ### Returns
+## The rendered bar chart string.
+pub function bar_chart(label, value: int, max_val: int, width: int = 20, fill_char: string = "█", empty_char: string = "░") -> string
     if max_val <= 0
         max_val = 1
     end
@@ -99,12 +128,15 @@ pub function bar_chart(label, value, max_val, width = 20, fill_char = "█", emp
     let filled_w = (value * width) / max_val
     let empty_w = width - filled_w
 
-    let bar_visual = color_bright_cyan(_chart_repeat(fill_char, filled_w)) + color_gray(_chart_repeat(empty_char, empty_w))
+    let filled_bar = color_bright_cyan(_chart_repeat(fill_char, filled_w))
+    let empty_bar = color_gray(_chart_repeat(empty_char, empty_w))
     let label_str = str(label)
     let lead = ""
     if len(label_str) > 0
         lead = style_bold(label_str) + " "
     end
+    let pct_str = style_bold("{pct}%")
+    let counts_str = color_gray(" ({value}/{max_val})")
 
-    return lead + "[" + bar_visual + "] " + style_bold(str(pct) + "%") + color_gray(" (" + str(value) + "/" + str(max_val) + ")")
+    return "{lead}[{filled_bar}{empty_bar}] {pct_str}{counts_str}"
 end

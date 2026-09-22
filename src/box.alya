@@ -1,16 +1,36 @@
-# Terminal UI Toolkit - Callout Box & Message Banner Formatter
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/box
+##
+## Terminal UI toolkit callout box and message banner formatter.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./types.alya"
 import "./style.alya"
 import "./border.alya"
 
-pub function box_new(content, title = "", border_name = "rounded", color_prefix = "", padding_x = 1, min_width = 0)
+## Creates a new `CalloutBox` model with presentation options.
+##
+## ### Parameters
+## - `content`: Box body text (multiline supported).
+## - `title`: Optional embedded title. Defaults to `""`.
+## - `border_name`: Border preset name. Defaults to `"rounded"`.
+## - `color_prefix`: ANSI color prefix. Defaults to `""`.
+## - `padding_x`: Horizontal content padding. Defaults to `1`.
+## - `min_width`: Minimum content width. Defaults to `0`.
+##
+## ### Returns
+## The new `CalloutBox` instance.
+##
+## ### Examples
+## ```alya
+## let b = box_new("Hello", "INFO")
+## ```
+pub function box_new(content, title: string = "", border_name: string = "rounded", color_prefix: string = "", padding_x: int = 1, min_width: int = 0) -> CalloutBox
     let b_chars = border_get(border_name)
-    return CalloutBox(content, title, b_chars, color_prefix, padding_x, min_width)
+    return CalloutBox { content: content, title: title, box_border_chars: b_chars, box_color_prefix: color_prefix, padding_x: padding_x, min_width: min_width }
 end
 
-pub function _box_split_lines(text)
+# Splits text into lines honoring CR, LF, and CRLF endings.
+pub function _box_split_lines(text) -> array
     let s = str(text)
     let slen = len(s)
     let res = []
@@ -40,7 +60,8 @@ pub function _box_split_lines(text)
     return res
 end
 
-function _box_repeat(ch, count)
+# Repeats a glyph count times for rule construction.
+function _box_repeat(ch: string, count: int) -> string
     if count <= 0
         return ""
     end
@@ -53,7 +74,14 @@ function _box_repeat(ch, count)
     return res
 end
 
-pub function box_render(cb)
+## Renders a `CalloutBox` into a bordered multiline string.
+##
+## ### Parameters
+## - `cb`: Target `CalloutBox` instance.
+##
+## ### Returns
+## The rendered box string.
+pub function box_render(cb: CalloutBox) -> string
     let content_lines = _box_split_lines(cb.content)
     let max_line_w = 0
     for line in content_lines
@@ -136,38 +164,89 @@ pub function box_render(cb)
     return res
 end
 
-pub function box_print(cb)
+## Prints a rendered `CalloutBox` to the terminal.
+##
+## ### Parameters
+## - `cb`: Target `CalloutBox` instance.
+pub function box_print(cb: CalloutBox)
     say box_render(cb)
 end
 
-# --- Pre-styled Callout Boxes ---
+# ───────────────────────────────────────────────────────────────
+# Pre-styled Callout Boxes
+# ───────────────────────────────────────────────────────────────
 
-pub function box_info(content, title = "INFO")
+## Renders a cyan `INFO` callout box.
+##
+## ### Parameters
+## - `content`: Box body text.
+## - `title`: Embedded title. Defaults to `"INFO"`.
+##
+## ### Returns
+## The rendered box string.
+pub function box_info(content, title: string = "INFO") -> string
     let b = box_new(content, title, "rounded", "\e[36m") # Cyan
     return box_render(b)
 end
 
-pub function box_success(content, title = "SUCCESS")
+## Renders a green `SUCCESS` callout box.
+##
+## ### Parameters
+## - `content`: Box body text.
+## - `title`: Embedded title. Defaults to `"SUCCESS"`.
+##
+## ### Returns
+## The rendered box string.
+pub function box_success(content, title: string = "SUCCESS") -> string
     let b = box_new(content, title, "rounded", "\e[32m") # Green
     return box_render(b)
 end
 
-pub function box_warn(content, title = "WARNING")
+## Renders a yellow `WARNING` callout box.
+##
+## ### Parameters
+## - `content`: Box body text.
+## - `title`: Embedded title. Defaults to `"WARNING"`.
+##
+## ### Returns
+## The rendered box string.
+pub function box_warn(content, title: string = "WARNING") -> string
     let b = box_new(content, title, "rounded", "\e[33m") # Yellow
     return box_render(b)
 end
 
-pub function box_error(content, title = "ERROR")
+## Renders a red `ERROR` callout box.
+##
+## ### Parameters
+## - `content`: Box body text.
+## - `title`: Embedded title. Defaults to `"ERROR"`.
+##
+## ### Returns
+## The rendered box string.
+pub function box_error(content, title: string = "ERROR") -> string
     let b = box_new(content, title, "rounded", "\e[31m") # Red
     return box_render(b)
 end
 
-# --- Struct Methods (Alya v0.0.18) ---
+# ───────────────────────────────────────────────────────────────
+# CalloutBox Struct Methods
+# ───────────────────────────────────────────────────────────────
 
-pub function CalloutBox.render(self)
+## Renders this box into a bordered multiline string.
+##
+## ### Parameters
+## - `self`: The target `CalloutBox` instance.
+##
+## ### Returns
+## The rendered box string.
+pub function CalloutBox.render(self: CalloutBox) -> string
     return box_render(self)
 end
 
-pub function CalloutBox.print(self)
+## Prints this box to the terminal.
+##
+## ### Parameters
+## - `self`: The target `CalloutBox` instance.
+pub function CalloutBox.print(self: CalloutBox)
     box_print(self)
 end

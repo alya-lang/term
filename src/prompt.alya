@@ -1,13 +1,24 @@
-# Terminal UI Toolkit - Interactive Console Prompts
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/prompt
+##
+## Terminal UI toolkit interactive console prompts.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./style.alya"
 
-# Prompts for text input with optional default value
-pub function prompt_text(message, default_val = "")
-    let prompt_str = color_cyan("?") + " " + style_bold(message)
+## Prompts for text input with an optional default value.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `default_val`: Fallback value on empty input. Defaults to `""`.
+##
+## ### Returns
+## The trimmed answer string.
+pub function prompt_text(message: string, default_val = "") -> string
+    let mark = color_cyan("?")
+    let head = style_bold(message)
+    let prompt_str = "{mark} {head}"
     if len(str(default_val)) > 0
-        prompt_str += color_gray(" [" + str(default_val) + "]")
+        prompt_str += color_gray(" [{default_val}]")
     end
     prompt_str += ": "
     let answer = trim(ask(prompt_str))
@@ -17,13 +28,25 @@ pub function prompt_text(message, default_val = "")
     return answer
 end
 
-# Asks a confirmation question. Returns 1 for yes, 0 for no.
-pub function prompt_confirm(message, default_yes = 1)
+## Asks a confirmation question, returning `1` for yes and `0` for no.
+##
+## Accepts English and Turkish affirmatives (`y`, `yes`, `evet`, ...).
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `default_yes`: Default on empty input. Defaults to `1`.
+##
+## ### Returns
+## `1` for yes, `0` for no.
+pub function prompt_confirm(message: string, default_yes: int = 1) -> int
     let suffix = " (Y/n): "
     if default_yes == 0
         suffix = " (y/N): "
     end
-    let prompt_str = color_yellow("?") + " " + style_bold(message) + color_gray(suffix)
+    let mark = color_yellow("?")
+    let head = style_bold(message)
+    let hint = color_gray(suffix)
+    let prompt_str = "{mark} {head}{hint}"
     let resp = lower(trim(ask(prompt_str)))
     if len(resp) == 0
         return default_yes
@@ -34,26 +57,39 @@ pub function prompt_confirm(message, default_yes = 1)
     end
 end
 
-# Prompts the user to select one option from a list
-pub function prompt_select(message, options, default_idx = 0)
+## Prompts the user to select one option from a list.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `options`: Option value array.
+## - `default_idx`: Default option index. Defaults to `0`.
+##
+## ### Returns
+## The selected option string.
+pub function prompt_select(message: string, options: array, default_idx: int = 0) -> string
     let opt_count = len(options)
     if opt_count == 0
         return ""
     end
-    say color_cyan("?") + " " + style_bold(message)
+    let mark = color_cyan("?")
+    let head = style_bold(message)
+    say "{mark} {head}"
     let i = 0
     while i < opt_count
-        let prefix = "  " + str(i + 1) + ") "
+        let num = i + 1
+        let prefix = "  {num}) "
+        let opt_val = options[i]
         if i == default_idx
-            say color_green(prefix + str(options[i]) + " (default)")
+            say color_green("{prefix}{opt_val} (default)")
         else
-            say color_gray(prefix) + str(options[i])
+            let gray_prefix = color_gray(prefix)
+            say "{gray_prefix}{opt_val}"
         end
         i += 1
     end
 
-    let prompt_str = color_gray("Select option [1-" + str(opt_count) + "]: ")
-    let raw = trim(ask(prompt_str))
+    let range_hint = color_gray("Select option [1-{opt_count}]: ")
+    let raw = trim(ask(range_hint))
     if len(raw) == 0
         if default_idx >= 0 and default_idx < opt_count
             return str(options[default_idx])
@@ -73,7 +109,8 @@ pub function prompt_select(message, options, default_idx = 0)
     return str(options[0])
 end
 
-function _prompt_repeat(ch, count)
+# Repeats a glyph count times for mask construction.
+function _prompt_repeat(ch: string, count: int) -> string
     if count <= 0
         return ""
     end
@@ -86,47 +123,84 @@ function _prompt_repeat(ch, count)
     return res
 end
 
-# Prompts for password / secret input using ANSI concealment
-pub function prompt_password(message, mask = "*")
-    let prompt_str = color_yellow("🔒") + " " + style_bold(message) + ": \e[8m"
+## Prompts for password or secret input using ANSI concealment.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `mask`: Echo mask glyph. Defaults to `"*"`.
+##
+## ### Returns
+## The entered secret string.
+pub function prompt_password(message: string, mask: string = "*") -> string
+    let mark = color_yellow("🔒")
+    let head = style_bold(message)
+    let prompt_str = "{mark} {head}: \e[8m"
     let pass = trim(ask(prompt_str))
-    say "\e[0m\e[1A\r" + color_yellow("🔒") + " " + style_bold(message) + ": " + color_gray(_prompt_repeat(mask, len(pass)))
+    let masked = color_gray(_prompt_repeat(mask, len(pass)))
+    say "\e[0m\e[1A\r{mark} {head}: {masked}"
     return pass
 end
 
-# Prompts for non-empty text input
-pub function prompt_non_empty(message, error_msg = "Value cannot be empty.")
+## Prompts for non-empty text input, re-asking on blank answers.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `error_msg`: Message shown on empty input. Defaults to `"Value cannot be empty."`.
+##
+## ### Returns
+## The non-empty answer string.
+pub function prompt_non_empty(message: string, error_msg: string = "Value cannot be empty.") -> string
     while 1
         let ans = prompt_text(message)
         if len(trim(ans)) > 0
             return ans
         end
-        say color_red("  ✖ " + error_msg)
+        say color_red("  ✖ {error_msg}")
     end
     return ""
 end
 
-# Prompts for integer number within range
-pub function prompt_int(message, min_val = 0, max_val = 2147483647, default_val = 0)
-    let prompt_str = message + " [" + str(min_val) + "-" + str(max_val) + "]"
+## Prompts for an integer number within an inclusive range.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `min_val`: Minimum accepted value. Defaults to `0`.
+## - `max_val`: Maximum accepted value. Defaults to `2147483647`.
+## - `default_val`: Fallback value on empty input. Defaults to `0`.
+##
+## ### Returns
+## The validated integer.
+pub function prompt_int(message: string, min_val: int = 0, max_val: int = 2147483647, default_val = 0) -> int
+    let prompt_str = "{message} [{min_val}-{max_val}]"
     while 1
         let raw = prompt_text(prompt_str, default_val)
         let num = int(raw)
         if num >= min_val and num <= max_val
             return num
         end
-        say color_red("  ✖ Please enter a number between " + str(min_val) + " and " + str(max_val))
+        say color_red("  ✖ Please enter a number between {min_val} and {max_val}")
     end
     return default_val
 end
 
-# Prompts the user to select multiple options (comma-separated indices)
-pub function prompt_multi_select(message, options, default_indices = [])
+## Prompts the user to select multiple options by comma-separated indices.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `options`: Option value array.
+## - `default_indices`: Default selected indices. Defaults to `[]`.
+##
+## ### Returns
+## Array of selected option values.
+pub function prompt_multi_select(message: string, options: array, default_indices: array = []) -> array
     let opt_count = len(options)
     if opt_count == 0
         return []
     end
-    say color_cyan("?") + " " + style_bold(message) + color_gray(" (comma-separated numbers, e.g. 1, 3)")
+    let mark = color_cyan("?")
+    let head = style_bold(message)
+    let hint = color_gray(" (comma-separated numbers, e.g. 1, 3)")
+    say "{mark} {head}{hint}"
     let i = 0
     while i < opt_count
         let is_def = 0
@@ -139,12 +213,14 @@ pub function prompt_multi_select(message, options, default_indices = [])
         else
             box = color_gray("[ ]")
         end
-        say "  " + str(i + 1) + ") " + box + " " + str(options[i])
+        let num = i + 1
+        let opt_val = options[i]
+        say "  {num}) {box} {opt_val}"
         i += 1
     end
 
-    let prompt_str = color_gray("Select options [1-" + str(opt_count) + "]: ")
-    let raw = trim(ask(prompt_str))
+    let range_hint = color_gray("Select options [1-{opt_count}]: ")
+    let raw = trim(ask(range_hint))
     if len(raw) == 0
         let res = []
         for idx in default_indices

@@ -1,6 +1,10 @@
-# Modern Terminal UI Toolkit for Alya
-# Provides ANSI styling, Unicode tables, callout boxes, progress bars, prompts, trees, charts, and cursor controls
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term
+##
+## Modern terminal UI toolkit for Alya.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
+##
+## Provides ANSI styling, Unicode tables, callout boxes, progress bars,
+## prompts, trees, charts, cursor controls, rules, and status loggers.
 
 import "./types.alya"
 import "./style.alya"
@@ -16,91 +20,254 @@ import "./tree.alya"
 import "./chart.alya"
 import "./live.alya"
 
-# --- High-Level Convenience Factory Functions ---
+# ───────────────────────────────────────────────────────────────
+# High-Level Convenience Factory Functions
+# ───────────────────────────────────────────────────────────────
 
-# Creates a new Table builder
-pub function table(headers = [], rows = [], border_name = "unicode")
+## Creates a new table builder preloaded with headers and rows.
+##
+## ### Parameters
+## - `headers`: Header cell array. Defaults to `[]`.
+## - `rows`: Data row array. Defaults to `[]`.
+## - `border_name`: Border preset name. Defaults to `"unicode"`.
+##
+## ### Returns
+## The new `Table` instance.
+pub function table(headers: array = [], rows: array = [], border_name: string = "unicode") -> Table
     return table_create(headers, rows, border_name)
 end
 
-# Creates a new CalloutBox
-pub function callout(content, title = "", border_name = "rounded")
+## Creates a new callout box.
+##
+## ### Parameters
+## - `content`: Box body text.
+## - `title`: Embedded title. Defaults to `""`.
+## - `border_name`: Border preset name. Defaults to `"rounded"`.
+##
+## ### Returns
+## The new `CalloutBox` instance.
+pub function callout(content, title: string = "", border_name: string = "rounded") -> CalloutBox
     return box_new(content, title, border_name)
 end
 
-# Formats a progress bar string
-pub function progress(current, total, width = 30)
+## Formats a progress bar string.
+##
+## ### Parameters
+## - `current`: Current progress value.
+## - `total`: Completion target value.
+## - `width`: Bar width in cells. Defaults to `30`.
+##
+## ### Returns
+## The rendered bar string.
+pub function progress(current: int, total: int, width: int = 30) -> string
     return progress_bar(current, total, width)
 end
 
-# Returns an animated spinner frame
-pub function spinner(step, style_name = "dots")
+## Returns an animated spinner frame for a step and style.
+##
+## ### Parameters
+## - `step`: Animation step integer.
+## - `style_name`: Spinner style name. Defaults to `"dots"`.
+##
+## ### Returns
+## The spinner glyph string.
+pub function spinner(step: int, style_name: string = "dots") -> string
     return spinner_char(step, style_name)
 end
 
-# Interactive console prompt
-pub function prompt(message, default_val = "")
+## Shows an interactive text prompt.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `default_val`: Fallback value on empty input. Defaults to `""`.
+##
+## ### Returns
+## The trimmed answer string.
+pub function prompt(message: string, default_val = "") -> string
     return prompt_text(message, default_val)
 end
 
-# Interactive yes/no confirmation
-pub function confirm(message, default_yes = 1)
+## Shows an interactive yes/no confirmation.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `default_yes`: Default on empty input. Defaults to `1`.
+##
+## ### Returns
+## `1` for yes, `0` for no.
+pub function confirm(message: string, default_yes: int = 1) -> int
     return prompt_confirm(message, default_yes)
 end
 
-# Interactive list selection
-pub function select(message, options, default_idx = 0)
+## Shows an interactive list selection.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `options`: Option value array.
+## - `default_idx`: Default option index. Defaults to `0`.
+##
+## ### Returns
+## The selected option string.
+pub function select(message: string, options: array, default_idx: int = 0) -> string
     return prompt_select(message, options, default_idx)
 end
 
-# Interactive password / secret prompt
-pub function password(message, mask = "*")
+## Shows an interactive password or secret prompt.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `mask`: Echo mask glyph. Defaults to `"*"`.
+##
+## ### Returns
+## The entered secret string.
+pub function password(message: string, mask: string = "*") -> string
     return prompt_password(message, mask)
 end
 
-# Interactive multi-selection prompt
-pub function multi_select(message, options, default_indices = [])
+## Shows an interactive multi-selection prompt.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `options`: Option value array.
+## - `default_indices`: Default selected indices. Defaults to `[]`.
+##
+## ### Returns
+## Array of selected option values.
+pub function multi_select(message: string, options: array, default_indices: array = []) -> array
     return prompt_multi_select(message, options, default_indices)
 end
 
-# Interactive non-empty prompt
-pub function prompt_required(message, error_msg = "Value cannot be empty.")
+## Shows an interactive non-empty prompt, re-asking on blank answers.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `error_msg`: Message shown on empty input. Defaults to `"Value cannot be empty."`.
+##
+## ### Returns
+## The non-empty answer string.
+pub function prompt_required(message: string, error_msg: string = "Value cannot be empty.") -> string
     return prompt_non_empty(message, error_msg)
 end
 
-# Interactive integer prompt
-pub function prompt_number(message, min_val = 0, max_val = 2147483647, default_val = 0)
+## Shows an interactive integer prompt within an inclusive range.
+##
+## ### Parameters
+## - `message`: Prompt question string.
+## - `min_val`: Minimum accepted value. Defaults to `0`.
+## - `max_val`: Maximum accepted value. Defaults to `2147483647`.
+## - `default_val`: Fallback value on empty input. Defaults to `0`.
+##
+## ### Returns
+## The validated integer.
+pub function prompt_number(message: string, min_val: int = 0, max_val: int = 2147483647, default_val = 0) -> int
     return prompt_int(message, min_val, max_val, default_val)
 end
 
-# Formats a horizontal rule / divider
-pub function hr(title = "", width = 60, style_name = "single")
+## Formats a horizontal rule or divider.
+##
+## ### Parameters
+## - `title`: Optional centered title. Defaults to `""`.
+## - `width`: Total line width. Defaults to `60`.
+## - `style_name`: Rule style name. Defaults to `"single"`.
+##
+## ### Returns
+## The rendered divider string.
+pub function hr(title = "", width: int = 60, style_name: string = "single") -> string
     return rule(title, width, style_name)
 end
 
-# Tree node factory
-pub function node(label, children = [])
+## Creates a tree node with child nodes.
+##
+## ### Parameters
+## - `label`: Node label value.
+## - `children`: Child `TreeNode` array. Defaults to `[]`.
+##
+## ### Returns
+## The new `TreeNode` instance.
+pub function node(label, children: array = []) -> TreeNode
     return tree_node(label, children)
 end
 
-# Tree leaf factory
-pub function leaf(label)
+## Creates a childless tree leaf node.
+##
+## ### Parameters
+## - `label`: Node label value.
+##
+## ### Returns
+## The new `TreeNode` instance.
+pub function leaf(label) -> TreeNode
     return tree_leaf(label)
 end
 
-# Sparkline chart
-pub function spark(values, min_val = null, max_val = null)
+## Renders a sparkline chart from an array of numbers.
+##
+## ### Parameters
+## - `values`: Numeric value array.
+## - `min_val`: Explicit range floor (auto-detected when null).
+## - `max_val`: Explicit range ceiling (auto-detected when null).
+##
+## ### Returns
+## The sparkline string.
+pub function spark(values: array, min_val = null, max_val = null) -> string
     return sparkline(values, min_val, max_val)
 end
 
-# Bar chart
-pub function bar(label, value, max_val, width = 20)
+## Renders a horizontal percentage bar chart.
+##
+## ### Parameters
+## - `label`: Chart label value.
+## - `value`: Current value integer.
+## - `max_val`: Range ceiling integer.
+## - `width`: Bar width in cells. Defaults to `20`.
+##
+## ### Returns
+## The rendered bar chart string.
+pub function bar(label, value: int, max_val: int, width: int = 20) -> string
     return bar_chart(label, value, max_val, width)
 end
 
-# Status logging shortcuts
-pub function success(msg) log_success(msg) end
-pub function warn(msg)    log_warn(msg) end
-pub function error(msg)   log_error(msg) end
-pub function info(msg)    log_info(msg) end
-pub function step(c, t, m) log_step(c, t, m) end
+# ───────────────────────────────────────────────────────────────
+# Status Logging Shortcuts
+# ───────────────────────────────────────────────────────────────
+
+## Prints a formatted success message.
+##
+## ### Parameters
+## - `msg`: Message value.
+pub function success(msg)
+    log_success(msg)
+end
+
+## Prints a formatted warning message.
+##
+## ### Parameters
+## - `msg`: Message value.
+pub function warn(msg)
+    log_warn(msg)
+end
+
+## Prints a formatted error message.
+##
+## ### Parameters
+## - `msg`: Message value.
+pub function error(msg)
+    log_error(msg)
+end
+
+## Prints a formatted info message.
+##
+## ### Parameters
+## - `msg`: Message value.
+pub function info(msg)
+    log_info(msg)
+end
+
+## Prints a formatted step progress message.
+##
+## ### Parameters
+## - `c`: Current step integer.
+## - `t`: Total step integer.
+## - `m`: Message value.
+pub function step(c: int, t: int, m)
+    log_step(c, t, m)
+end

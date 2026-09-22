@@ -1,79 +1,183 @@
-# Terminal UI Toolkit - Dynamic Table Formatter & Builder
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/table
+##
+## Terminal UI toolkit dynamic table formatter and builder.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./types.alya"
 import "./style.alya"
 import "./border.alya"
 
-# --- Table Factory ---
+# ───────────────────────────────────────────────────────────────
+# Table Factory
+# ───────────────────────────────────────────────────────────────
 
-pub function table_new(border_style_name = "unicode")
+## Creates an empty table with a border preset.
+##
+## ### Parameters
+## - `border_style_name`: Border preset name. Defaults to `"unicode"`.
+##
+## ### Returns
+## The new `Table` instance.
+pub function table_new(border_style_name: string = "unicode") -> Table
     let b = border_get(border_style_name)
-    return Table([], [], [], [], b, 1, 1, 1, 1)
+    return Table { headers: [], rows: [], alignments: [], max_widths: [], border_chars: b, show_headers: 1, show_borders: 1, show_separator: 1, padding: 1 }
 end
 
-pub function table_create(headers = [], rows = [], border_style_name = "unicode")
+## Creates a table preloaded with headers and rows.
+##
+## ### Parameters
+## - `headers`: Header cell array. Defaults to `[]`.
+## - `rows`: Data row array. Defaults to `[]`.
+## - `border_style_name`: Border preset name. Defaults to `"unicode"`.
+##
+## ### Returns
+## The new `Table` instance.
+pub function table_create(headers: array = [], rows: array = [], border_style_name: string = "unicode") -> Table
     let t = table_new(border_style_name)
     t.headers = headers
     t.rows = rows
     return t
 end
 
-# --- Table Configuration Setters ---
+# ───────────────────────────────────────────────────────────────
+# Table Configuration Setters
+# ───────────────────────────────────────────────────────────────
 
-pub function table_set_headers(tbl, headers)
+## Replaces the header row, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `headers`: Header cell array.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_headers(tbl: Table, headers: array) -> Table
     tbl.headers = headers
     return tbl
 end
 
-pub function table_add_row(tbl, row)
+## Appends a data row, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `row`: Row cell array.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_add_row(tbl: Table, row: array) -> Table
     tbl.rows.push(row)
     return tbl
 end
 
-pub function table_add_rows(tbl, rows)
+## Appends multiple data rows, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `rows`: Array of row cell arrays.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_add_rows(tbl: Table, rows: array) -> Table
     for row in rows
         tbl.rows.push(row)
     end
     return tbl
 end
 
-pub function table_set_border(tbl, border_name)
+## Switches the border preset, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `border_name`: Border preset name.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_border(tbl: Table, border_name: string) -> Table
     tbl.border_chars = border_get(border_name)
     return tbl
 end
 
-pub function table_set_border_chars(tbl, border_chars)
+## Installs a custom border glyph set, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `border_chars`: Custom `BorderChars` instance.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_border_chars(tbl: Table, border_chars: BorderChars) -> Table
     tbl.border_chars = border_chars
     return tbl
 end
 
-pub function table_set_alignments(tbl, aligns)
+## Sets per-column alignments, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `aligns`: Per-column `Alignment` values.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_alignments(tbl: Table, aligns: array) -> Table
     tbl.alignments = aligns
     return tbl
 end
 
-pub function table_set_max_widths(tbl, max_widths)
+## Sets per-column width caps, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `max_widths`: Per-column width caps (`0` for uncapped).
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_max_widths(tbl: Table, max_widths: array) -> Table
     tbl.max_widths = max_widths
     return tbl
 end
 
-pub function table_set_padding(tbl, pad)
+## Sets horizontal cell padding, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `pad`: Padding space count.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_padding(tbl: Table, pad: int) -> Table
     tbl.padding = pad
     return tbl
 end
 
-pub function table_set_show_headers(tbl, show)
+## Toggles header row rendering, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `show`: `1` renders headers, `0` hides them.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_show_headers(tbl: Table, show: int) -> Table
     tbl.show_headers = show
     return tbl
 end
 
-pub function table_set_show_borders(tbl, show)
+## Toggles outer border rendering, returning the updated table.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+## - `show`: `1` renders borders, `0` hides them.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function table_set_show_borders(tbl: Table, show: int) -> Table
     tbl.show_borders = show
     return tbl
 end
 
-# --- Internal Helper Functions ---
+# ───────────────────────────────────────────────────────────────
+# Internal Helper Functions
+# ───────────────────────────────────────────────────────────────
 
 function _str_repeat(ch, count)
     if count <= 0
@@ -244,9 +348,18 @@ function _make_border_line(widths, left_ch, mid_ch, right_ch, horiz_ch, pad_size
     return res
 end
 
-# --- Main Table Rendering ---
+# ───────────────────────────────────────────────────────────────
+# Main Table Rendering
+# ───────────────────────────────────────────────────────────────
 
-pub function table_render(tbl)
+## Renders a table into a bordered multiline string.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+##
+## ### Returns
+## The rendered table string.
+pub function table_render(tbl: Table) -> string
     let hlen = len(tbl.headers)
     let rlen = len(tbl.rows)
 
@@ -400,52 +513,141 @@ pub function table_render(tbl)
     return result
 end
 
-pub function table_print(tbl)
+## Prints a rendered table to the terminal.
+##
+## ### Parameters
+## - `tbl`: Target `Table` instance.
+pub function table_print(tbl: Table)
     say table_render(tbl)
 end
 
-# --- Struct Methods (Alya v0.0.18) ---
+# ───────────────────────────────────────────────────────────────
+# Table Struct Methods
+# ───────────────────────────────────────────────────────────────
 
-pub function Table.set_headers(self, headers)
+## Replaces the header row, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `headers`: Header cell array.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_headers(self: Table, headers: array) -> Table
     return table_set_headers(self, headers)
 end
 
-pub function Table.add_row(self, row)
+## Appends a data row, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `row`: Row cell array.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.add_row(self: Table, row: array) -> Table
     return table_add_row(self, row)
 end
 
-pub function Table.add_rows(self, rows)
+## Appends multiple data rows, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `rows`: Array of row cell arrays.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.add_rows(self: Table, rows: array) -> Table
     return table_add_rows(self, rows)
 end
 
-pub function Table.set_border(self, border_name)
+## Switches the border preset, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `border_name`: Border preset name.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_border(self: Table, border_name: string) -> Table
     return table_set_border(self, border_name)
 end
 
-pub function Table.set_alignments(self, aligns)
+## Sets per-column alignments, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `aligns`: Per-column `Alignment` values.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_alignments(self: Table, aligns: array) -> Table
     return table_set_alignments(self, aligns)
 end
 
-pub function Table.set_max_widths(self, max_widths)
+## Sets per-column width caps, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `max_widths`: Per-column width caps (`0` for uncapped).
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_max_widths(self: Table, max_widths: array) -> Table
     return table_set_max_widths(self, max_widths)
 end
 
-pub function Table.set_padding(self, pad)
+## Sets horizontal cell padding, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `pad`: Padding space count.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_padding(self: Table, pad: int) -> Table
     return table_set_padding(self, pad)
 end
 
-pub function Table.set_show_headers(self, show)
+## Toggles header row rendering, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `show`: `1` renders headers, `0` hides them.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_show_headers(self: Table, show: int) -> Table
     return table_set_show_headers(self, show)
 end
 
-pub function Table.set_show_borders(self, show)
+## Toggles outer border rendering, returning the updated table.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+## - `show`: `1` renders borders, `0` hides them.
+##
+## ### Returns
+## The updated `Table` instance.
+pub function Table.set_show_borders(self: Table, show: int) -> Table
     return table_set_show_borders(self, show)
 end
 
-pub function Table.render(self)
+## Renders this table into a bordered multiline string.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+##
+## ### Returns
+## The rendered table string.
+pub function Table.render(self: Table) -> string
     return table_render(self)
 end
 
-pub function Table.print(self)
+## Prints this table to the terminal.
+##
+## ### Parameters
+## - `self`: The target `Table` instance.
+pub function Table.print(self: Table)
     table_print(self)
 end

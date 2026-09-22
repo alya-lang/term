@@ -1,37 +1,81 @@
-# Terminal UI Toolkit - Border Style Presets
-# Part of the Alya Language package ecosystem (https://github.com/alya-lang)
+## # term/border
+##
+## Terminal UI toolkit border style presets.
+## Part of the Alya Language package ecosystem (https://github.com/alya-lang).
 
 import "./types.alya"
 
-pub function border_unicode()
-    return BorderChars("┌", "┬", "┐", "└", "┴", "┘", "├", "┼", "┤", "─", "│")
+## Returns the Unicode single-line border glyph set.
+##
+## ### Returns
+## A `BorderChars` instance with `┌┬┐` corners.
+pub function border_unicode() -> BorderChars
+    return BorderChars { top_left: "┌", top_mid: "┬", top_right: "┐", bottom_left: "└", bottom_mid: "┴", bottom_right: "┘", mid_left: "├", mid_mid: "┼", mid_right: "┤", horiz: "─", vert: "│" }
 end
 
-pub function border_rounded()
-    return BorderChars("╭", "┬", "╮", "╰", "┴", "╯", "├", "┼", "┤", "─", "│")
+## Returns the rounded-corner border glyph set.
+##
+## ### Returns
+## A `BorderChars` instance with `╭╮╰╯` corners.
+pub function border_rounded() -> BorderChars
+    return BorderChars { top_left: "╭", top_mid: "┬", top_right: "╮", bottom_left: "╰", bottom_mid: "┴", bottom_right: "╯", mid_left: "├", mid_mid: "┼", mid_right: "┤", horiz: "─", vert: "│" }
 end
 
-pub function border_double()
-    return BorderChars("╔", "╦", "╗", "╚", "╩", "╝", "╠", "╬", "╣", "═", "║")
+## Returns the double-line border glyph set.
+##
+## ### Returns
+## A `BorderChars` instance with `╔╦╗` corners.
+pub function border_double() -> BorderChars
+    return BorderChars { top_left: "╔", top_mid: "╦", top_right: "╗", bottom_left: "╚", bottom_mid: "╩", bottom_right: "╝", mid_left: "╠", mid_mid: "╬", mid_right: "╣", horiz: "═", vert: "║" }
 end
 
-pub function border_ascii()
-    return BorderChars("+", "+", "+", "+", "+", "+", "+", "+", "+", "-", "|")
+## Returns the ASCII-only border glyph set.
+##
+## ### Returns
+## A `BorderChars` instance using `+`, `-`, and `|`.
+pub function border_ascii() -> BorderChars
+    return BorderChars { top_left: "+", top_mid: "+", top_right: "+", bottom_left: "+", bottom_mid: "+", bottom_right: "+", mid_left: "+", mid_mid: "+", mid_right: "+", horiz: "-", vert: "|" }
 end
 
-pub function border_markdown()
-    return BorderChars("|", "|", "|", "|", "|", "|", "|", "|", "|", "-", "|")
+## Returns the Markdown-table border glyph set.
+##
+## ### Returns
+## A `BorderChars` instance using pipes and dashes.
+pub function border_markdown() -> BorderChars
+    return BorderChars { top_left: "|", top_mid: "|", top_right: "|", bottom_left: "|", bottom_mid: "|", bottom_right: "|", mid_left: "|", mid_mid: "|", mid_right: "|", horiz: "-", vert: "|" }
 end
 
-pub function border_compact()
-    return BorderChars("", "", "", "", "", "", "", "", "", "─", " ")
+## Returns the compact border glyph set (horizontal rules only).
+##
+## ### Returns
+## A `BorderChars` instance with blank corners and space separators.
+pub function border_compact() -> BorderChars
+    return BorderChars { top_left: "", top_mid: "", top_right: "", bottom_left: "", bottom_mid: "", bottom_right: "", mid_left: "", mid_mid: "", mid_right: "", horiz: "─", vert: " " }
 end
 
-pub function border_none()
-    return BorderChars("", "", "", "", "", "", "", "", "", " ", " ")
+## Returns the borderless glyph set.
+##
+## ### Returns
+## A `BorderChars` instance rendering no visible borders.
+pub function border_none() -> BorderChars
+    return BorderChars { top_left: "", top_mid: "", top_right: "", bottom_left: "", bottom_mid: "", bottom_right: "", mid_left: "", mid_mid: "", mid_right: "", horiz: " ", vert: " " }
 end
 
-pub function border_get(name)
+## Resolves a border preset by enum value or style name.
+##
+## Unknown names fall back to the Unicode preset.
+##
+## ### Parameters
+## - `name`: `BorderStyle` value or style name string.
+##
+## ### Returns
+## The matching `BorderChars` instance.
+##
+## ### Examples
+## ```alya
+## let b = border_get("rounded")
+## ```
+pub function border_get(name) -> BorderChars
     when name
         is BorderStyle.Unicode, "unicode" then return border_unicode()
         is BorderStyle.Rounded, "rounded" then return border_rounded()
