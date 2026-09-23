@@ -20,6 +20,7 @@ function main()
     let succ = status::format_success("Compilation finished")
     runner_assert(r, len(succ) > 0, "format_success produces non-empty string")
     let plain_succ = style::strip_ansi(succ)
+    runner_assert(r, len(plain_succ) > 0, "format_success produces valid string")
     runner_assert(r, style::visible_len(succ) > 0, "format_success visible length > 0")
 
     # 3. Format Warning
