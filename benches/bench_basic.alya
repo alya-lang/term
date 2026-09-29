@@ -17,6 +17,16 @@ function main()
     end
     bench_stop(runner, "visible_len() with ANSI [100k calls]")
 
+    @cfg(feature = "widgets")
+    bench_widgets(runner)
+
+    @cfg(feature = "interactive")
+    bench_interactive(runner)
+    bench_summary(runner)
+end
+
+@cfg(feature = "widgets")
+function bench_widgets(runner)
     # 2. Benchmark: Table creation & rendering
     bench_start(runner, 5000)
     let j = 0
@@ -40,7 +50,10 @@ function main()
         k += 1
     end
     bench_stop(runner, "box_render() callout banner [10k calls]")
+end
 
+@cfg(feature = "interactive")
+function bench_interactive(runner)
     # 4. Benchmark: Progress bar rendering
     bench_start(runner, 50000)
     let m = 0
@@ -49,8 +62,5 @@ function main()
         m += 1
     end
     bench_stop(runner, "progress() bar calculation [50k calls]")
-
-    bench_summary(runner)
 end
-
 main()

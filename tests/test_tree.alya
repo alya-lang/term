@@ -3,6 +3,7 @@
 import "std/test"
 import "../src/tree.alya" as tree
 
+@cfg(feature = "widgets")
 function main()
     test_suite("Tree Hierarchy Test Suite")
     let r = runner_new()
@@ -38,6 +39,18 @@ function main()
     let f_rendered = tree::tree(deep_root)
     runner_assert_str_eq(r, f_rendered, deep_rendered, "tree facade matches tree_render")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "widgets"))
+function main()
+    test_suite("Tree Hierarchy Test Suite (skipped without widgets feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

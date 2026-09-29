@@ -3,6 +3,7 @@
 import "std/test"
 import "../src/lib.alya" as term
 
+@cfg(feature = "interactive")
 function main()
     test_suite("term Progress & Spinner Test Suite")
     let r = runner_new()
@@ -40,6 +41,18 @@ function main()
     let s_arrows = term::spinner(2, "arrows")
     runner_assert(r, len(s_arrows) > 0, "arrows spinner returns frame")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "interactive"))
+function main()
+    test_suite("term Progress & Spinner Test Suite (skipped without interactive feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

@@ -14,17 +14,25 @@ function main()
     runner_assert_eq(r, term::visible_len(red_txt), 5, "visible_len ignores ANSI escapes")
 
     # 2. Table Facade
+    @cfg(feature = "widgets")
     let t = term::table(["A", "B"], [["1", "2"]])
+    @cfg(feature = "widgets")
     let rendered = term::table_render(t)
+    @cfg(feature = "widgets")
     runner_assert(r, len(rendered) > 0, "table_render returns non-empty string")
+    @cfg(feature = "widgets")
     runner_assert(r, term::visible_len(rendered) > 0, "rendered table has visible text")
 
     # 3. Callout Box
+    @cfg(feature = "widgets")
     let b = term::box_info("All systems operational", "STATUS")
+    @cfg(feature = "widgets")
     runner_assert(r, len(b) > 0, "box_info renders callout box")
 
     # 4. Progress Bar
+    @cfg(feature = "interactive")
     let pb = term::progress(50, 100, 20)
+    @cfg(feature = "interactive")
     runner_assert(r, len(pb) > 0, "progress returns formatted bar")
 
     # 5. Horizontal Rules & KV
@@ -32,18 +40,26 @@ function main()
     runner_assert_eq(r, term::visible_len(hr_str), 40, "hr renders exact width")
 
     # 7. Mini Visualizations
+    @cfg(feature = "widgets")
     let sp = term::spark([1, 4, 8, 3, 7])
+    @cfg(feature = "widgets")
     runner_assert(r, len(sp) > 0, "spark returns sparkline")
 
+    @cfg(feature = "widgets")
     let b_chart = term::bar("RAM", 64, 128, 16)
+    @cfg(feature = "widgets")
     runner_assert(r, len(b_chart) > 0, "bar returns formatted bar chart")
 
     # 8. Tree Hierarchy
+    @cfg(feature = "widgets")
     let tr = term::node("app", [term::leaf("main.alya")])
+    @cfg(feature = "widgets")
     let tr_rendered = term::tree(tr)
+    @cfg(feature = "widgets")
     runner_assert(r, len(tr_rendered) > 0, "tree facade renders hierarchy")
 
     # 9. Cursor Controls
+    @cfg(feature = "interactive")
     runner_assert_str_eq(r, term::cursor_hide(), "\e[?25l", "cursor_hide generates escape code")
 
     # 10. v0.0.18 Enums and Struct Methods
@@ -52,20 +68,32 @@ function main()
     runner_assert_eq(r, term::Color.Green, 32, "Color.Green is 32")
     runner_assert_eq(r, term::Style.Bold, 1, "Style.Bold is 1")
 
+    @cfg(feature = "widgets")
     let t_method = term::table(["A", "B"], [["1", "2"]])
+    @cfg(feature = "widgets")
     let t_m_out = t_method.render()
+    @cfg(feature = "widgets")
     runner_assert(r, len(t_m_out) > 0, "Table.render struct method works")
 
+    @cfg(feature = "widgets")
     let cb_method = term::callout("Content", "Title")
+    @cfg(feature = "widgets")
     let cb_m_out = cb_method.render()
+    @cfg(feature = "widgets")
     runner_assert(r, len(cb_m_out) > 0, "CalloutBox.render struct method works")
 
+    @cfg(feature = "interactive")
     let pb_method = term::progress_bar_new(100, 20)
+    @cfg(feature = "interactive")
     let pb_m_out = pb_method.render(50)
+    @cfg(feature = "interactive")
     runner_assert(r, len(pb_m_out) > 0, "ProgressBar.render struct method works")
 
+    @cfg(feature = "widgets")
     let tr_method = term::node("root", [term::leaf("child")])
+    @cfg(feature = "widgets")
     let tr_m_out = tr_method.render()
+    @cfg(feature = "widgets")
     runner_assert(r, len(tr_m_out) > 0, "TreeNode.render struct method works")
 
     let failed = runner_summary(r)

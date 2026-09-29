@@ -4,6 +4,7 @@ import "std/test"
 import "../src/status.alya" as status
 import "../src/style.alya" as style
 
+@cfg(feature = "interactive")
 function main()
     test_suite("Status Badges & Loggers Test Suite")
     let r = runner_new()
@@ -43,6 +44,18 @@ function main()
     let plain_step = style::strip_ansi(step_str)
     runner_assert(r, len(plain_step) > 0, "format_step produces valid string")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "interactive"))
+function main()
+    test_suite("Status Badges & Loggers Test Suite (skipped without interactive feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

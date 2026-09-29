@@ -3,6 +3,7 @@
 import "std/test"
 import "../src/cursor.alya" as cursor
 
+@cfg(feature = "interactive")
 function main()
     test_suite("Cursor & Screen Control Test Suite")
     let r = runner_new()
@@ -29,6 +30,18 @@ function main()
     runner_assert_str_eq(r, cursor::clear_to_end(), "\e[K", "clear_to_end returns \\e[K")
     runner_assert_str_eq(r, cursor::clear_to_start(), "\e[1K", "clear_to_start returns \\e[1K")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "interactive"))
+function main()
+    test_suite("Cursor & Screen Control Test Suite (skipped without interactive feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

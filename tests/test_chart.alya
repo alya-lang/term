@@ -4,6 +4,7 @@ import "std/test"
 import "../src/chart.alya" as chart
 import "../src/style.alya" as style
 
+@cfg(feature = "widgets")
 function main()
     test_suite("Mini Charts & Sparklines Test Suite")
     let r = runner_new()
@@ -33,6 +34,18 @@ function main()
     let bar_overflow = chart::bar_chart("Over", 150, 100, 10)
     runner_assert(r, len(bar_overflow) > 0, "overflowing value clamps properly")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "widgets"))
+function main()
+    test_suite("Mini Charts & Sparklines Test Suite (skipped without widgets feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)

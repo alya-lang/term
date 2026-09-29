@@ -12,6 +12,11 @@ keywords = ["alya", "alya-lang", "package", "term", "terminal", "table", "ansi",
 
 [dependencies]
 
+[features]
+default = ["widgets", "interactive"]
+widgets = []
+interactive = []
+
 # [lint]
 # disabled_rules = []
 # exclude = []

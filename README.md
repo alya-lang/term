@@ -85,6 +85,25 @@ alya add term --git https://github.com/alya-lang/term --branch main
 alya install
 ```
 
+### Package Features
+
+| Feature | Default | Description |
+|:---|:---:|:---|
+| `widgets` | ✅ | Static widgets: tables, callout boxes, trees, charts. |
+| `interactive` | ✅ | Interactive/live UI: prompts, progress bars, spinners, status shortcuts, cursor controls, live regions. |
+
+Styling, borders, and rules always work.
+
+```bash
+# Full build (default)
+alya install
+alya test
+
+# Slim build (styling only)
+alya install --no-default-features
+alya test --no-default-features
+```
+
 ---
 
 ## 🚀 Quick Start

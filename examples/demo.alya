@@ -37,11 +37,17 @@ function main()
     say ""
 
     # 2. Status Loggers & Icons
+    @cfg(feature = "interactive")
     say term::style_bold("2. Status Loggers & Badges:")
+    @cfg(feature = "interactive")
     term::info("Starting build pipeline for 'alya-app'...")
+    @cfg(feature = "interactive")
     term::step(1, 3, "Compiling source files into native binary")
+    @cfg(feature = "interactive")
     term::warn("Unused local variable 'temp_buffer' at line 42")
+    @cfg(feature = "interactive")
     term::success("Compilation succeeded in 1.42s")
+    @cfg(feature = "interactive")
     say ""
 
     # 3. Horizontal Rules & Key-Value Lists
@@ -53,6 +59,90 @@ function main()
     say term::hr("", 50, "double")
     say ""
 
+    @cfg(feature = "widgets")
+    demo_tree()
+
+    # 5. Mini Visualizations (Sparklines & Bar Charts)
+    @cfg(feature = "widgets")
+    say term::style_bold("5. Mini Visualizations:")
+    @cfg(feature = "widgets")
+    let cpu_spark = term::color_bright_cyan(term::spark([5, 12, 25, 45, 80, 95, 65, 40, 20, 10]))
+    @cfg(feature = "widgets")
+    say "  CPU Load Trend (last 10m):  {cpu_spark}"
+    @cfg(feature = "widgets")
+    let mem_bar = term::bar("RAM", 72, 100, 20)
+    @cfg(feature = "widgets")
+    say "  Memory Usage: {mem_bar}"
+    @cfg(feature = "widgets")
+    let disk_bar = term::bar("SSD", 35, 100, 20)
+    @cfg(feature = "widgets")
+    say "  Disk Space:   {disk_bar}"
+    @cfg(feature = "widgets")
+    say ""
+
+    # 6. Callout Boxes
+    @cfg(feature = "widgets")
+    say term::style_bold("6. Callout Banners:")
+    @cfg(feature = "widgets")
+    say term::box_info("Alya Compiler v0.0.18 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
+    @cfg(feature = "widgets")
+    say ""
+    @cfg(feature = "widgets")
+    say term::box_success("All 11 package test suites passed with 100% coverage.", "BUILD PASSED")
+    @cfg(feature = "widgets")
+    say ""
+
+    # 7. Dynamic Table (Unicode Rounded)
+    @cfg(feature = "widgets")
+    say term::style_bold("7. Dynamic Table (Unicode Rounded with Badges):")
+    @cfg(feature = "widgets")
+    let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], term::BorderStyle.Rounded)
+    @cfg(feature = "widgets")
+    t.set_alignments([term::Alignment.Left, term::Alignment.Left, term::Alignment.Right, term::Alignment.Center, term::Alignment.Right])
+    @cfg(feature = "widgets")
+    t.add_row(["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
+    @cfg(feature = "widgets")
+    t.add_row(["2", "Auth Service", "8081", term::badge("RUNNING", "green"), "8 ms"])
+    @cfg(feature = "widgets")
+    t.add_row(["3", "Database Pool", "5432", term::badge("DEGRADED", "yellow"), "142 ms"])
+    @cfg(feature = "widgets")
+    t.add_row(["4", "Redis Cache", "6379", term::badge("STOPPED", "red"), "0 ms"])
+    @cfg(feature = "widgets")
+    t.print()
+    @cfg(feature = "widgets")
+    say ""
+
+    # 8. Progress Bars & Spinners
+    @cfg(feature = "interactive")
+    say term::style_bold("8. Progress Indicators:")
+    @cfg(feature = "interactive")
+    let dl_bar = term::progress(75, 100, 25)
+    @cfg(feature = "interactive")
+    say "  Downloading assets: {dl_bar}"
+    @cfg(feature = "interactive")
+    let cc_bar = term::progress(100, 100, 25)
+    @cfg(feature = "interactive")
+    say "  Compiling binaries: {cc_bar}"
+    @cfg(feature = "interactive")
+    let sp0 = term::spinner(0)
+    @cfg(feature = "interactive")
+    let sp1 = term::spinner(1)
+    @cfg(feature = "interactive")
+    let sp2 = term::spinner(2)
+    @cfg(feature = "interactive")
+    let sp3 = term::spinner(3)
+    @cfg(feature = "interactive")
+    let sp4 = term::spinner(4)
+    @cfg(feature = "interactive")
+    say "  Spinner frames:     {sp0} {sp1} {sp2} {sp3} {sp4}"
+    @cfg(feature = "interactive")
+    say ""
+
+    say term::color_green("✓ Demo executed successfully!")
+end
+
+@cfg(feature = "widgets")
+function demo_tree()
     # 4. Tree Hierarchy
     say term::style_bold("4. Tree Hierarchy Visualization:")
     let project_tree = term::node("my_project", [
@@ -70,50 +160,5 @@ function main()
     ])
     say project_tree.render()
     say ""
-
-    # 5. Mini Visualizations (Sparklines & Bar Charts)
-    say term::style_bold("5. Mini Visualizations:")
-    let cpu_spark = term::color_bright_cyan(term::spark([5, 12, 25, 45, 80, 95, 65, 40, 20, 10]))
-    say "  CPU Load Trend (last 10m):  {cpu_spark}"
-    let mem_bar = term::bar("RAM", 72, 100, 20)
-    say "  Memory Usage: {mem_bar}"
-    let disk_bar = term::bar("SSD", 35, 100, 20)
-    say "  Disk Space:   {disk_bar}"
-    say ""
-
-    # 6. Callout Boxes
-    say term::style_bold("6. Callout Banners:")
-    say term::box_info("Alya Compiler v0.0.18 is ready for deployment.\nZero-setup toolchain is fully active.", "RELEASE")
-    say ""
-    say term::box_success("All 11 package test suites passed with 100% coverage.", "BUILD PASSED")
-    say ""
-
-    # 7. Dynamic Table (Unicode Rounded)
-    say term::style_bold("7. Dynamic Table (Unicode Rounded with Badges):")
-    let t = term::table(["ID", "Service", "Port", "Status", "Latency"], [], term::BorderStyle.Rounded)
-    t.set_alignments([term::Alignment.Left, term::Alignment.Left, term::Alignment.Right, term::Alignment.Center, term::Alignment.Right])
-    t.add_row(["1", "API Gateway", "443", term::badge("RUNNING", "green"), "12 ms"])
-    t.add_row(["2", "Auth Service", "8081", term::badge("RUNNING", "green"), "8 ms"])
-    t.add_row(["3", "Database Pool", "5432", term::badge("DEGRADED", "yellow"), "142 ms"])
-    t.add_row(["4", "Redis Cache", "6379", term::badge("STOPPED", "red"), "0 ms"])
-    t.print()
-    say ""
-
-    # 8. Progress Bars & Spinners
-    say term::style_bold("8. Progress Indicators:")
-    let dl_bar = term::progress(75, 100, 25)
-    say "  Downloading assets: {dl_bar}"
-    let cc_bar = term::progress(100, 100, 25)
-    say "  Compiling binaries: {cc_bar}"
-    let sp0 = term::spinner(0)
-    let sp1 = term::spinner(1)
-    let sp2 = term::spinner(2)
-    let sp3 = term::spinner(3)
-    let sp4 = term::spinner(4)
-    say "  Spinner frames:     {sp0} {sp1} {sp2} {sp3} {sp4}"
-    say ""
-
-    say term::color_green("✓ Demo executed successfully!")
 end
-
 main()

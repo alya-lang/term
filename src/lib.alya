@@ -9,15 +9,24 @@
 import "./types.alya"
 import "./style.alya"
 import "./border.alya"
+@cfg(feature = "widgets")
 import "./table.alya"
+@cfg(feature = "widgets")
 import "./box.alya"
+@cfg(feature = "interactive")
 import "./progress.alya"
+@cfg(feature = "interactive")
 import "./prompt.alya"
+@cfg(feature = "interactive")
 import "./cursor.alya"
+@cfg(feature = "interactive")
 import "./status.alya"
 import "./rule.alya"
+@cfg(feature = "widgets")
 import "./tree.alya"
+@cfg(feature = "widgets")
 import "./chart.alya"
+@cfg(feature = "interactive")
 import "./live.alya"
 
 # ───────────────────────────────────────────────────────────────
@@ -33,6 +42,9 @@ import "./live.alya"
 ##
 ## ### Returns
 ## The new `Table` instance.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function table(headers: array = [], rows: array = [], border_name: string = "unicode") -> Table
     return table_create(headers, rows, border_name)
 end
@@ -46,6 +58,9 @@ end
 ##
 ## ### Returns
 ## The new `CalloutBox` instance.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function callout(content, title: string = "", border_name: string = "rounded") -> CalloutBox
     return box_new(content, title, border_name)
 end
@@ -59,6 +74,9 @@ end
 ##
 ## ### Returns
 ## The rendered bar string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function progress(current: int, total: int, width: int = 30) -> string
     return progress_bar(current, total, width)
 end
@@ -71,6 +89,9 @@ end
 ##
 ## ### Returns
 ## The spinner glyph string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function spinner(step: int, style_name: string = "dots") -> string
     return spinner_char(step, style_name)
 end
@@ -83,6 +104,9 @@ end
 ##
 ## ### Returns
 ## The trimmed answer string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function prompt(message: string, default_val = "") -> string
     return prompt_text(message, default_val)
 end
@@ -95,6 +119,9 @@ end
 ##
 ## ### Returns
 ## `1` for yes, `0` for no.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function confirm(message: string, default_yes: int = 1) -> int
     return prompt_confirm(message, default_yes)
 end
@@ -108,6 +135,9 @@ end
 ##
 ## ### Returns
 ## The selected option string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function select(message: string, options: array, default_idx: int = 0) -> string
     return prompt_select(message, options, default_idx)
 end
@@ -120,6 +150,9 @@ end
 ##
 ## ### Returns
 ## The entered secret string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function password(message: string, mask: string = "*") -> string
     return prompt_password(message, mask)
 end
@@ -133,6 +166,9 @@ end
 ##
 ## ### Returns
 ## Array of selected option values.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function multi_select(message: string, options: array, default_indices: array = []) -> array
     return prompt_multi_select(message, options, default_indices)
 end
@@ -145,6 +181,9 @@ end
 ##
 ## ### Returns
 ## The non-empty answer string.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function prompt_required(message: string, error_msg: string = "Value cannot be empty.") -> string
     return prompt_non_empty(message, error_msg)
 end
@@ -159,6 +198,9 @@ end
 ##
 ## ### Returns
 ## The validated integer.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function prompt_number(message: string, min_val: int = 0, max_val: int = 2147483647, default_val = 0) -> int
     return prompt_int(message, min_val, max_val, default_val)
 end
@@ -184,6 +226,9 @@ end
 ##
 ## ### Returns
 ## The new `TreeNode` instance.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function node(label, children: array = []) -> TreeNode
     return tree_node(label, children)
 end
@@ -195,6 +240,9 @@ end
 ##
 ## ### Returns
 ## The new `TreeNode` instance.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function leaf(label) -> TreeNode
     return tree_leaf(label)
 end
@@ -208,6 +256,9 @@ end
 ##
 ## ### Returns
 ## The sparkline string.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function spark(values: array, min_val = null, max_val = null) -> string
     return sparkline(values, min_val, max_val)
 end
@@ -222,6 +273,9 @@ end
 ##
 ## ### Returns
 ## The rendered bar chart string.
+## Requires the `widgets` feature (default-on).
+##
+@cfg(feature = "widgets")
 pub function bar(label, value: int, max_val: int, width: int = 20) -> string
     return bar_chart(label, value, max_val, width)
 end
@@ -234,6 +288,9 @@ end
 ##
 ## ### Parameters
 ## - `msg`: Message value.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function success(msg)
     log_success(msg)
 end
@@ -242,6 +299,9 @@ end
 ##
 ## ### Parameters
 ## - `msg`: Message value.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function warn(msg)
     log_warn(msg)
 end
@@ -250,6 +310,9 @@ end
 ##
 ## ### Parameters
 ## - `msg`: Message value.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function error(msg)
     log_error(msg)
 end
@@ -258,6 +321,9 @@ end
 ##
 ## ### Parameters
 ## - `msg`: Message value.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function info(msg)
     log_info(msg)
 end
@@ -268,6 +334,9 @@ end
 ## - `c`: Current step integer.
 ## - `t`: Total step integer.
 ## - `m`: Message value.
+## Requires the `interactive` feature (default-on).
+##
+@cfg(feature = "interactive")
 pub function step(c: int, t: int, m)
     log_step(c, t, m)
 end

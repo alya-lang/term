@@ -3,6 +3,7 @@
 import "std/test"
 import "../src/lib.alya" as term
 
+@cfg(feature = "widgets")
 function main()
     test_suite("term Table Formatting Test Suite")
     let r = runner_new()
@@ -58,6 +59,18 @@ function main()
     let out_multi = term::table_render(t_multi)
     runner_assert(r, len(out_multi) > 0, "multi-line cell table renders cleanly")
 
+    let failed = runner_summary(r)
+    if failed > 0
+        exit(1)
+    end
+end
+
+# Needs the feature: register an empty suite so the file still
+# compiles and passes in slim views.
+@cfg(not(feature = "widgets"))
+function main()
+    test_suite("term Table Formatting Test Suite (skipped without widgets feature)")
+    let r = runner_new()
     let failed = runner_summary(r)
     if failed > 0
         exit(1)
