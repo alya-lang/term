@@ -1,6 +1,6 @@
 [package]
 name = "term"
-version = "0.2.0"
+version = "0.1.0"
 alya-version = "0.0.19"
 entry = "src/lib.alya"
 description = "Modern terminal UI toolkit: ANSI styling, tables, callouts, trees, progress bars, charts, prompts, and cursor controls"
@@ -11,11 +11,6 @@ repository = "https://github.com/alya-lang/term"
 keywords = ["alya", "alya-lang", "package", "term", "terminal", "table", "ansi", "tui", "prompt", "cli"]
 
 [dependencies]
-
-[features]
-default = ["widgets", "interactive"]
-widgets = []
-interactive = []
 
 # [lint]
 # disabled_rules = []
@@ -29,3 +24,8 @@ interactive = []
 
 # [bench]
 # exclude = []
+
+[features]
+default = ["widgets", "interactive"]
+widgets = []
+interactive = []
