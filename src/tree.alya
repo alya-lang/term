@@ -36,11 +36,11 @@ function _tree_walk(node: TreeNode, prefix: string, is_last: int, is_root: int, 
     let children = node.children
 
     let next_prefix = prefix
-    if is_root == 1
+    if is_root == true
         out_lines.push(label)
     else
         let connector = "├── "
-        if is_last == 1
+        if is_last == true
             connector = "└── "
             next_prefix += "    "
         else
@@ -53,11 +53,11 @@ function _tree_walk(node: TreeNode, prefix: string, is_last: int, is_root: int, 
     let i = 0
     while i < c_len
         let child = children[i]
-        let child_is_last = 0
+        let child_is_last = false
         if i == c_len - 1
-            child_is_last = 1
+            child_is_last = true
         end
-        _tree_walk(child, next_prefix, child_is_last, 0, out_lines)
+        _tree_walk(child, next_prefix, child_is_last, false, out_lines)
         i += 1
     end
 end
@@ -71,7 +71,7 @@ end
 ## The rendered tree string.
 pub function tree_render(root: TreeNode) -> string
     let lines = []
-    _tree_walk(root, "", 1, 1, lines)
+    _tree_walk(root, "", true, true, lines)
     let res = ""
     let i = 0
     let count = len(lines)

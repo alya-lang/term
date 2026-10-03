@@ -20,7 +20,7 @@ import "./border.alya"
 ## The new `Table` instance.
 pub function table_new(border_style_name: string = "unicode") -> Table
     let b = border_get(border_style_name)
-    return Table { headers: [], rows: [], alignments: [], max_widths: [], border_chars: b, show_headers: 1, show_borders: 1, show_separator: 1, padding: 1 }
+    return Table { headers: [], rows: [], alignments: [], max_widths: [], border_chars: b, show_headers: true, show_borders: true, show_separator: true, padding: 1 }
 end
 
 ## Creates a table preloaded with headers and rows.

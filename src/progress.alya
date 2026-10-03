@@ -27,7 +27,7 @@ pub function progress_bar_new(total: int, width: int = 30, filled_char: string =
     if width <= 0
         width = 20
     end
-    return ProgressBar { current: 0, total: total, width: width, filled_char: filled_char, empty_char: empty_char, head_char: head_char, color_prefix: color_prefix, show_percent: 1, show_counts: 1 }
+    return ProgressBar { current: 0, total: total, width: width, filled_char: filled_char, empty_char: empty_char, head_char: head_char, color_prefix: color_prefix, show_percent: true, show_counts: true }
 end
 
 # Repeats a glyph count times for bar construction.

@@ -38,9 +38,9 @@ end
 ##
 ## ### Returns
 ## `1` for yes, `0` for no.
-pub function prompt_confirm(message: string, default_yes: int = 1) -> int
+pub function prompt_confirm(message: string, default_yes: int = true) -> int
     let suffix = " (Y/n): "
-    if default_yes == 0
+    if default_yes == false
         suffix = " (y/N): "
     end
     let mark = color_yellow("?")
@@ -52,8 +52,8 @@ pub function prompt_confirm(message: string, default_yes: int = 1) -> int
         return default_yes
     end
     when resp
-        is "y", "yes", "1", "e", "evet", "true" then return 1
-        else return 0
+        is "y", "yes", "1", "e", "evet", "true" then return true
+        else return false
     end
 end
 
@@ -203,12 +203,12 @@ pub function prompt_multi_select(message: string, options: array, default_indice
     say "{mark} {head}{hint}"
     let i = 0
     while i < opt_count
-        let is_def = 0
+        let is_def = false
         if i in default_indices
-            is_def = 1
+            is_def = true
         end
         let box = "[ ]"
-        if is_def == 1
+        if is_def == true
             box = color_green("[✓]")
         else
             box = color_gray("[ ]")
