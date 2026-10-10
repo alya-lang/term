@@ -46,7 +46,7 @@ function _tree_walk(node: TreeNode, prefix: string, is_last: int, is_root: int, 
         else
             next_prefix += "│   "
         end
-        out_lines.push("{prefix}{connector}{label}")
+        out_lines.push(f"{prefix}{connector}{label}")
     end
 
     let c_len = len(children)
@@ -79,7 +79,7 @@ pub function tree_render(root: TreeNode) -> string
         if i == 0
             res = lines[i]
         else
-            res += "\n{lines[i]}"
+            res += f"\n{lines[i]}"
         end
         i += 1
     end

@@ -135,8 +135,8 @@ pub function bar_chart(label, value: int, max_val: int, width: int = 20, fill_ch
     if len(label_str) > 0
         lead = style_bold(label_str) + " "
     end
-    let pct_str = style_bold("{pct}%")
-    let counts_str = color_gray(" ({value}/{max_val})")
+    let pct_str = style_bold(f"{pct}%")
+    let counts_str = color_gray(f" ({value}/{max_val})")
 
-    return "{lead}[{filled_bar}{empty_bar}] {pct_str}{counts_str}"
+    return f"{lead}[{filled_bar}{empty_bar}] {pct_str}{counts_str}"
 end

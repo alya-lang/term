@@ -100,18 +100,18 @@ pub function progress_bar_render(pb: ProgressBar, current: int) -> string
 
     let filled_part = _prog_repeat(pb.filled_char, actual_filled)
     let empty_part = _prog_repeat(pb.empty_char, empty_count)
-    let bar = "[{col}{filled_part}"
+    let bar = f"[{col}{filled_part}"
     if head_count > 0
         bar += pb.head_char
     end
-    bar += "{reset}{empty_part}]"
+    bar += f"{reset}{empty_part}]"
 
     if pb.show_percent
-        bar += " {percent}%"
+        bar += f" {percent}%"
     end
 
     if pb.show_counts
-        bar += " ({cur}/{tot})"
+        bar += f" ({cur}/{tot})"
     end
 
     return bar

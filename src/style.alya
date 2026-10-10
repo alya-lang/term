@@ -257,7 +257,7 @@ end
 ## ### Returns
 ## The formatted tag string.
 pub function tag(label: string, value: string, color_name = "cyan") -> string
-    let key_part = color_gray("{label}: ")
+    let key_part = color_gray(f"{label}: ")
     let val_part = badge(value, color_name)
-    return "[{key_part}{val_part}]"
+    return f"[{key_part}{val_part}]"
 end

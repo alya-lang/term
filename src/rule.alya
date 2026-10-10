@@ -62,7 +62,7 @@ pub function rule(title = "", width: int = 60, style_name: string = "single") ->
     if width < prefix_len + t_vis + 4
         # Narrow width fallback
         let edge = _repeat(ch, 2)
-        return "{edge} {title_str} {edge}"
+        return f"{edge} {title_str} {edge}"
     end
 
     let prefix = _repeat(ch, prefix_len) + " "
@@ -70,7 +70,7 @@ pub function rule(title = "", width: int = 60, style_name: string = "single") ->
     let suffix = " " + _repeat(ch, suffix_len)
     let bold_title = style_bold(title_str)
 
-    return "{prefix}{bold_title}{suffix}"
+    return f"{prefix}{bold_title}{suffix}"
 end
 
 ## Formats a key-value pair aligned with leader characters.
@@ -95,13 +95,13 @@ pub function kv(key, value, width: int = 40, leader: string = ".") -> string
     let v_vis = visible_len(v_str)
 
     if k_vis + v_vis + 2 >= width
-        return "{k_str} {v_str}"
+        return f"{k_str} {v_str}"
     end
 
     let fill_count = width - (k_vis + v_vis + 2)
     let fill = color_gray(_repeat(leader, fill_count))
 
-    return "{k_str} {fill} {v_str}"
+    return f"{k_str} {fill} {v_str}"
 end
 
 ## Formats an array of `[key, value]` pairs into an aligned block.
@@ -126,7 +126,7 @@ pub function kv_list(pairs: array, width: int = 40, leader: string = ".") -> str
         if i == 0
             res = line
         else
-            res += "\n{line}"
+            res += f"\n{line}"
         end
         i += 1
     end

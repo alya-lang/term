@@ -16,7 +16,7 @@ import "./style.alya"
 pub function live_frame(text: string) -> string
     let up = cursor_up(1)
     let cleared = clear_line()
-    return "{up}\r{cleared}{text}"
+    return f"{up}\r{cleared}{text}"
 end
 
 ## Starts a live line by outputting the initial line.

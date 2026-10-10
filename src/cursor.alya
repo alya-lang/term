@@ -16,7 +16,7 @@
 ## ### Returns
 ## The ANSI positioning sequence.
 pub function cursor_to(row: int, col: int) -> string
-    return "\e[{row};{col}H"
+    return f"\e[{row};{col}H"
 end
 
 ## Moves the cursor up by `n` lines.
@@ -30,7 +30,7 @@ pub function cursor_up(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[{n}A"
+    return f"\e[{n}A"
 end
 
 ## Moves the cursor down by `n` lines.
@@ -44,7 +44,7 @@ pub function cursor_down(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[{n}B"
+    return f"\e[{n}B"
 end
 
 ## Moves the cursor forward (right) by `n` columns.
@@ -58,7 +58,7 @@ pub function cursor_forward(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[{n}C"
+    return f"\e[{n}C"
 end
 
 ## Alias for `cursor_forward`.
@@ -83,7 +83,7 @@ pub function cursor_back(n: int = 1) -> string
     if n <= 0
         return ""
     end
-    return "\e[{n}D"
+    return f"\e[{n}D"
 end
 
 ## Alias for `cursor_back`.

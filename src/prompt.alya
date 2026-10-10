@@ -16,9 +16,9 @@ import "./style.alya"
 pub function prompt_text(message: string, default_val = "") -> string
     let mark = color_cyan("?")
     let head = style_bold(message)
-    let prompt_str = "{mark} {head}"
+    let prompt_str = f"{mark} {head}"
     if len(str(default_val)) > 0
-        prompt_str += color_gray(" [{default_val}]")
+        prompt_str += color_gray(f" [{default_val}]")
     end
     prompt_str += ": "
     let answer = trim(ask(prompt_str))
@@ -46,7 +46,7 @@ pub function prompt_confirm(message: string, default_yes: int = true) -> int
     let mark = color_yellow("?")
     let head = style_bold(message)
     let hint = color_gray(suffix)
-    let prompt_str = "{mark} {head}{hint}"
+    let prompt_str = f"{mark} {head}{hint}"
     let resp = lower(trim(ask(prompt_str)))
     if len(resp) == 0
         return default_yes
@@ -73,22 +73,22 @@ pub function prompt_select(message: string, options: array, default_idx: int = 0
     end
     let mark = color_cyan("?")
     let head = style_bold(message)
-    say "{mark} {head}"
+    say f"{mark} {head}"
     let i = 0
     while i < opt_count
         let num = i + 1
-        let prefix = "  {num}) "
+        let prefix = f"  {num}) "
         let opt_val = options[i]
         if i == default_idx
-            say color_green("{prefix}{opt_val} (default)")
+            say color_green(f"{prefix}{opt_val} (default)")
         else
             let gray_prefix = color_gray(prefix)
-            say "{gray_prefix}{opt_val}"
+            say f"{gray_prefix}{opt_val}"
         end
         i += 1
     end
 
-    let range_hint = color_gray("Select option [1-{opt_count}]: ")
+    let range_hint = color_gray(f"Select option [1-{opt_count}]: ")
     let raw = trim(ask(range_hint))
     if len(raw) == 0
         if default_idx >= 0 and default_idx < opt_count
@@ -134,10 +134,10 @@ end
 pub function prompt_password(message: string, mask: string = "*") -> string
     let mark = color_yellow("🔒")
     let head = style_bold(message)
-    let prompt_str = "{mark} {head}: \e[8m"
+    let prompt_str = f"{mark} {head}: \e[8m"
     let pass = trim(ask(prompt_str))
     let masked = color_gray(_prompt_repeat(mask, len(pass)))
-    say "\e[0m\e[1A\r{mark} {head}: {masked}"
+    say f"\e[0m\e[1A\r{mark} {head}: {masked}"
     return pass
 end
 
@@ -155,7 +155,7 @@ pub function prompt_non_empty(message: string, error_msg: string = "Value cannot
         if len(trim(ans)) > 0
             return ans
         end
-        say color_red("  ✖ {error_msg}")
+        say color_red(f"  ✖ {error_msg}")
     end
     return ""
 end
@@ -171,14 +171,14 @@ end
 ## ### Returns
 ## The validated integer.
 pub function prompt_int(message: string, min_val: int = 0, max_val: int = 2147483647, default_val = 0) -> int
-    let prompt_str = "{message} [{min_val}-{max_val}]"
+    let prompt_str = f"{message} [{min_val}-{max_val}]"
     while 1
         let raw = prompt_text(prompt_str, default_val)
         let num = int(raw)
         if num >= min_val and num <= max_val
             return num
         end
-        say color_red("  ✖ Please enter a number between {min_val} and {max_val}")
+        say color_red(f"  ✖ Please enter a number between {min_val} and {max_val}")
     end
     return default_val
 end
@@ -200,7 +200,7 @@ pub function prompt_multi_select(message: string, options: array, default_indice
     let mark = color_cyan("?")
     let head = style_bold(message)
     let hint = color_gray(" (comma-separated numbers, e.g. 1, 3)")
-    say "{mark} {head}{hint}"
+    say f"{mark} {head}{hint}"
     let i = 0
     while i < opt_count
         let is_def = false
@@ -215,11 +215,11 @@ pub function prompt_multi_select(message: string, options: array, default_indice
         end
         let num = i + 1
         let opt_val = options[i]
-        say "  {num}) {box} {opt_val}"
+        say f"  {num}) {box} {opt_val}"
         i += 1
     end
 
-    let range_hint = color_gray("Select options [1-{opt_count}]: ")
+    let range_hint = color_gray(f"Select options [1-{opt_count}]: ")
     let raw = trim(ask(range_hint))
     if len(raw) == 0
         let res = []
